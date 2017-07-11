@@ -41,16 +41,16 @@ class RouteTest extends FitTest
 
     public function testRouteWithName()
     {
-        $route = new Route('test', ['controller' => 'test', 'name' => 'POST']);
+        $route = new Route('test', ['controller' => 'test', 'alias' => 'POST']);
 
-        $this->assertEquals('POST', $route->getName());
+        $this->assertEquals('POST', $route->getAlias());
     }
 
     public function testRouteWithoutName()
     {
         $route = new Route('test', ['controller' => 'test']);
 
-        $this->assertEquals('test', $route->getName());
+        $this->assertEquals('test', $route->getAlias());
     }
 
     /**
@@ -59,7 +59,7 @@ class RouteTest extends FitTest
      */
     public function testRouteWithNameException()
     {
-        new Route('test', ['controller' => 'test', 'name' => 1]);
+        new Route('test', ['controller' => 'test', 'alias' => 1]);
     }
 
     public function testRouteWithMethod()

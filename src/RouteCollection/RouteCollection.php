@@ -16,14 +16,14 @@ class RouteCollection implements IRouteCollection
 
     public function add(Route $route)
     {
-        $this->routes[$route->getName()] = $route;
+        $this->routes[$route->getAlias()] = $route;
     }
 
     /**
      * @param string $resource
      * @param array $config
      */
-    public function create(string $resource, array $config)
+    private function create(string $resource, array $config)
     {
         $this->add(new Route($resource, $config));
     }

@@ -12,17 +12,11 @@ class RouteCollectionTest extends FitTest
     {
         $collection1 = new RouteCollection();
 
-        $collection1->create('test', ['controller' => 'test']);
-        $collection1->add(new Route('test', ['controller' => 'test', 'name' => 'test2']));
-
-        $collection2 = new RouteCollection();
-
-        $collection2->create('test', ['controller' => 'test']);
-        $collection2->add(new Route('test', ['controller' => 'test']));
+        $collection1->add(new Route('test', ['controller' => 'test']));
+        $collection1->add(new Route('test', ['controller' => 'test', 'alias' => 'test2']));
 
         $this->assertIsArray($collection1->getAll());
         $this->assertCount(2, $collection1->getAll());
-        $this->assertCount(1, $collection2->getAll());
     }
 
     public function testAddManyRoute()
@@ -33,7 +27,7 @@ class RouteCollectionTest extends FitTest
             'routeCollection' => [
                 'test1' => ['controller' => 'test'],
                 'test2' => ['controller' => 'test2'],
-                'test3' => ['controller' => 'test2', 'name' => 'test3']
+                'test3' => ['controller' => 'test2', 'alias' => 'test3']
             ]
         ]);
 
@@ -53,13 +47,13 @@ class RouteCollectionTest extends FitTest
                             'controller' => 'test1Controller/aAction',
                             'group' => [
                                 '/1' => [],
-                                '/2' => ['name' => 'test1.a.2']
+                                '/2' => ['alias' => 'test1.a.2']
                             ],
                         ],
                         '/b' => ['controller' => 'test1/b'],
                     ],
                 ],
-                '/test2' => ['controller' => 'test2', 'name' => 'test.2'],
+                '/test2' => ['controller' => 'test2', 'alias' => 'test.2'],
                 '/test3' => [
                     'controller' => 'test3Controller',
                     'group' => [
@@ -99,7 +93,7 @@ class RouteCollectionTest extends FitTest
             'routeCollection' => [
                 'test1' => ['controller' => 'test'],
                 'test2' => ['controller' => 'test2'],
-                'test3' => ['controller' => 'test2', 'name' => 'test3']
+                'test3' => ['controller' => 'test2', 'alias' => 'test3']
             ]
         ]);
 
@@ -118,7 +112,7 @@ class RouteCollectionTest extends FitTest
             'routeCollection' => [
                 'test1' => ['controller' => 'test'],
                 'test2' => ['controller' => 'test2'],
-                'test3' => ['controller' => 'test2', 'name' => 'test3']
+                'test3' => ['controller' => 'test2', 'alias' => 'test3']
             ]
         ]);
 
