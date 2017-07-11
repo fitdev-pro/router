@@ -1,0 +1,36 @@
+{
+  "name": "fitdev-pro/router",
+  "description": "PHP 7.0 HTTP Router Implementation.",
+  "type": "library",
+  "license": "MIT",
+  "homepage": "https://fitdev.pro",
+  "authors": [
+    {
+      "name": "Karol Kondraciuk",
+      "email": "karol.kondraciuk@fitdev.pro",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^7.0",
+    "beberlei/assert": "^2.7"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6.1",
+    "codacy/coverage": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "FitdevPro\\FitRouter\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "FitdevPro\\FitRouter\\Tests\\": "tests/src",
+      "FitdevPro\\FitRouter\\TestsLib\\": "tests/lib"
+    }
+  },
+  "config": {
+    "bin-dir": "bin"
+  }
+}
