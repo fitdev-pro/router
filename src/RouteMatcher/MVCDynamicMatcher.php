@@ -3,16 +3,17 @@
 namespace FitdevPro\FitRouter\RouteMatcher;
 
 use Assert\Assertion;
+use FitdevPro\FitRouter\Request\IRequest;
 use FitdevPro\FitRouter\Route;
-use FitdevPro\FitRouter\RouteCollection;
+use FitdevPro\FitRouter\RouteCollection\IRouteCollection;
 
 class MVCDynamicMatcher implements IRouteMatcher
 {
     protected $segments = 2;
 
-    public function match(RouteCollection $routeCollection, string $requestUrl, string $requestMethod): Route
+    public function match(IRouteCollection $routeCollection, IRequest $request): Route
     {
-        $route = new Route($requestUrl, ['controller' => $requestUrl]);
+        $route = new Route($request->getRequsetUrl(), ['controller' => $request->getRequsetUrl()]);
 
         $path = $this->extractUrlInfo($route);
 

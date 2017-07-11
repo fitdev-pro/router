@@ -1,9 +1,9 @@
 <?php
 
-namespace FitdevPro\FitRouter\Tests;
+namespace FitdevPro\FitRouter\Tests\RouteCollection;
 
 use FitdevPro\FitRouter\Route;
-use FitdevPro\FitRouter\RouteCollection;
+use FitdevPro\FitRouter\RouteCollection\RouteCollection;
 use FitdevPro\FitRouter\TestsLib\FitTest;
 
 class RouteCollectionTest extends FitTest
@@ -29,7 +29,7 @@ class RouteCollectionTest extends FitTest
     {
         $collection1 = new RouteCollection();
 
-        $collection1->addMany([
+        $collection1->load([
             'routeCollection' => [
                 'test1' => ['controller' => 'test'],
                 'test2' => ['controller' => 'test2'],
@@ -45,7 +45,7 @@ class RouteCollectionTest extends FitTest
     {
         $collection1 = new RouteCollection();
 
-        $collection1->addMany([
+        $collection1->load([
             'routeCollection' => [
                 '/test1' => [
                     'group' => [
@@ -89,5 +89,39 @@ class RouteCollectionTest extends FitTest
         $this->assertArrayHasKey('test3Controller/bAction', $all);
         $this->assertEquals('test3Controller/bAction', $all['test3Controller/bAction']->getController());
         $this->assertEquals('/test3/b', $all['test3Controller/bAction']->getUrl());
+    }
+
+    public function testGetRoute()
+    {
+        $collection1 = new RouteCollection();
+
+        $collection1->load([
+            'routeCollection' => [
+                'test1' => ['controller' => 'test'],
+                'test2' => ['controller' => 'test2'],
+                'test3' => ['controller' => 'test2', 'name' => 'test3']
+            ]
+        ]);
+
+        $this->assertInstanceOf(Route::class, $collection1->get('test3'));
+    }
+
+    /**
+     * @expectedException \Assert\InvalidArgumentException
+     * @expectedExceptionCode 26
+     */
+    public function testGetRouteException()
+    {
+        $collection1 = new RouteCollection();
+
+        $collection1->load([
+            'routeCollection' => [
+                'test1' => ['controller' => 'test'],
+                'test2' => ['controller' => 'test2'],
+                'test3' => ['controller' => 'test2', 'name' => 'test3']
+            ]
+        ]);
+
+        $this->assertInstanceOf(Route::class, $collection1->get('test3a'));
     }
 }

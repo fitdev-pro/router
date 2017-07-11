@@ -2,16 +2,17 @@
 
 namespace FitdevPro\FitRouter\RouteMatcher;
 
+use FitdevPro\FitRouter\Request\IRequest;
 use FitdevPro\FitRouter\Route;
-use FitdevPro\FitRouter\RouteCollection;
+use FitdevPro\FitRouter\RouteCollection\IRouteCollection;
 
 class HMVCDynamicMatcher extends MVCDynamicMatcher
 {
     protected $segments = 3;
 
-    public function match(RouteCollection $routeCollection, string $requestUrl, string $requestMethod): Route
+    public function match(IRouteCollection $routeCollection, IRequest $request): Route
     {
-        $route = new Route($requestUrl, ['controller' => $requestUrl]);
+        $route = new Route($request->getRequsetUrl(), ['controller' => $request->getRequsetUrl()]);
 
         $path = $this->extractUrlInfo($route);
 

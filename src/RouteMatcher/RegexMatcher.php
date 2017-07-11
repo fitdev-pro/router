@@ -3,17 +3,18 @@
 namespace FitdevPro\FitRouter\RouteMatcher;
 
 use FitdevPro\FitRouter\Exception\MatcherException;
+use FitdevPro\FitRouter\Request\IRequest;
 use FitdevPro\FitRouter\Route;
-use FitdevPro\FitRouter\RouteCollection;
+use FitdevPro\FitRouter\RouteCollection\IRouteCollection;
 
 class RegexMatcher implements IRouteMatcher
 {
 
-    public function match(RouteCollection $routeCollection, string $requestUrl, string $requestMethod): Route
+    public function match(IRouteCollection $routeCollection, IRequest $request): Route
     {
         foreach ($routeCollection->getAll() as $route) {
             try {
-                $this->checkRoute($route, $requestUrl, $requestMethod);
+                $this->checkRoute($route, $request->getRequsetUrl(), $request->getRequestMethod());
 
                 return $route;
             } catch (MatcherException $e) {

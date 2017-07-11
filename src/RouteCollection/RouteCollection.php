@@ -1,17 +1,23 @@
 <?php
 
-namespace FitdevPro\FitRouter;
+namespace FitdevPro\FitRouter\RouteCollection;
 
 use Assert\Assertion;
+use FitdevPro\FitRouter\Route;
 
 /**
  * Class RouteCollection
  * @package FitdevPro\FitRouter
  */
-class RouteCollection
+class RouteCollection implements IRouteCollection
 {
     /** @var Route[] */
     protected $routes = [];
+
+    public function add(Route $route)
+    {
+        $this->routes[$route->getName()] = $route;
+    }
 
     /**
      * @param string $resource
@@ -22,15 +28,10 @@ class RouteCollection
         $this->add(new Route($resource, $config));
     }
 
-    public function add(Route $route)
-    {
-        $this->routes[$route->getName()] = $route;
-    }
-
     /**
      * @param array $configs
      */
-    public function addMany(array $configs)
+    public function load(array $configs)
     {
         Assertion::keyExists($configs, 'routeCollection');
 
@@ -64,6 +65,19 @@ class RouteCollection
                 $this->create($namePart, $configPart);
             }
         }
+    }
+
+    //-----------------------------------------------------------------------------
+
+    /**
+     * @param string $name
+     * @return Route
+     */
+    public function get(string $name): Route
+    {
+        Assertion::keyExists($this->routes, $name);
+
+        return $this->routes[$name];
     }
 
     /**
