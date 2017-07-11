@@ -24,6 +24,8 @@ class Route
 
     private $controller;
 
+    private $name;
+
     private $config;
 
     private $parameters = array();
@@ -43,16 +45,20 @@ class Route
 
         $this->controller = $config['controller'];
 
+        if (isset($config['name'])) {
+            $this->name = (string)$config['name'];
+        }
+
         if (isset($config['methods'])) {
             $this->methods = (array)$config['methods'];
         }
 
         if (isset($config['parameters'])) {
-            $this->parameters = $config['parameters'];
+            $this->parameters = (array)$config['parameters'];
         }
 
         if (isset($config['validation'])) {
-            $this->validation = $config['validation'];
+            $this->validation = (array)$config['validation'];
         }
     }
 
@@ -73,7 +79,11 @@ class Route
 
     public function getName()
     {
-        return $this->getController();
+        if (is_null($this->name)) {
+            return $this->getController();
+        }
+
+        return $this->name;
     }
 
     public function getValidation(): array

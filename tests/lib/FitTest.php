@@ -1,6 +1,6 @@
 <?php
 
-namespace FitdevPro\DI\Tests\Libs;
+namespace FitdevPro\FitRouter\TestsLib;
 
 use PHPUnit\Framework\TestCase;
 
