@@ -23,13 +23,13 @@ class Router
     /**
      * Router constructor.
      * @param RouteCollection $routeCollection
-     * @param IRouteFiller $routeMatcher
+     * @param IRouteMatcher $routeMatcher
      * @param IRouteFiller|null $routeFiller
      * @param IUrlFiller|null $urlFiller
      */
     public function __construct(
         RouteCollection $routeCollection,
-        IRouteFiller $routeMatcher,
+        IRouteMatcher $routeMatcher,
         IRouteFiller $routeFiller = null,
         IUrlFiller $urlFiller = null
     ) {
@@ -56,13 +56,13 @@ class Router
 
     public function match($requestUrl, $requestMethod)
     {
-        $route = $this->routeMatcher->match($this->routeCollection, $requestUrl, $requestMethod);
-
-        if(!is_null($route)){
+        try {
+            $route = $this->routeMatcher->match($this->routeCollection, $requestUrl, $requestMethod);
             $this->fill($route);
+            return $route;
+        } catch (RouterException $e) {
+            return null;
         }
-
-        return $route;
     }
 
     private function fill(Route $route)

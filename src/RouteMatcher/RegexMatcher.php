@@ -21,7 +21,7 @@ class RegexMatcher implements IRouteMatcher
             }
         }
 
-        return null;
+        throw new MatcherException('Rout not found.');
     }
 
     private function checkRoute(Route $route, $requestUrl, $requestMethod)
