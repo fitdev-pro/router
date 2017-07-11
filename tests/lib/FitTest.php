@@ -16,4 +16,9 @@ class FitTest extends TestCase
 
         return $o;
     }
+
+    public function assertIsArray($array, $message = '')
+    {
+        $this->assertTrue(is_array($array), $message);
+    }
 }

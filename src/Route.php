@@ -33,32 +33,46 @@ class Route
     private $validation = array();
 
     /**
-     * @param       $resource
+     * Route constructor.
+     * @param string $url
      * @param array $config
      */
-    public function __construct(string $resource, array $config)
+    public function __construct(string $url, array $config)
     {
-        $this->url = '/' . trim($resource, '/');
+        $this->url = '/' . trim($url, '/');
         $this->config  = $config;
 
         Assertion::keyExists($config, 'controller');
+        Assertion::string($config['controller']);
 
         $this->controller = $config['controller'];
 
         if (isset($config['name'])) {
-            $this->name = (string)$config['name'];
+            Assertion::string($config['name']);
+
+            $this->name = $config['name'];
         }
 
         if (isset($config['methods'])) {
-            $this->methods = (array)$config['methods'];
+            if (is_string($config['methods'])) {
+                $config['methods'] = [$config['methods']];
+            }
+
+            Assertion::isArray($config['methods']);
+
+            $this->methods = $config['methods'];
         }
 
         if (isset($config['parameters'])) {
-            $this->parameters = (array)$config['parameters'];
+            Assertion::isArray($config['parameters']);
+
+            $this->parameters = $config['parameters'];
         }
 
         if (isset($config['validation'])) {
-            $this->validation = (array)$config['validation'];
+            Assertion::isArray($config['validation']);
+
+            $this->validation = $config['validation'];
         }
     }
 

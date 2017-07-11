@@ -39,37 +39,26 @@ class Router
         $this->routeMatcher = $routeMatcher;
     }
 
-    public function addRoute(Route $route)
-    {
-        $this->routeCollection->add($route);
-    }
-
-    public function loadRoutes(array $config)
-    {
-        $this->routeCollection->addMany($config);
-    }
-
-    public function matchRequest()
-    {
-        return $this->match($this->getRequsetUrl(), $this->getRequestMethod());
-    }
-
     public function match($requestUrl, $requestMethod)
     {
         try {
             $route = $this->routeMatcher->match($this->routeCollection, $requestUrl, $requestMethod);
-            $this->fill($route);
+
+            if (!is_null($this->routeFiller)) {
+                $this->routeFiller->fill($route);
+            }
+
             return $route;
         } catch (RouterException $e) {
             return null;
         }
     }
 
-    private function fill(Route $route)
+    //-----------------------------------------------------------------------------
+
+    public function matchRequest()
     {
-        if (!is_null($this->routeFiller)) {
-            $this->routeFiller->fill($route);
-        }
+        return $this->match($this->getRequsetUrl(), $this->getRequestMethod());
     }
 
     private function getRequestMethod()
@@ -116,5 +105,17 @@ class Router
         }
 
         return $url;
+    }
+
+    //-----------------------------------------------------------------------------
+
+    public function addRoute(Route $route)
+    {
+        $this->routeCollection->add($route);
+    }
+
+    public function loadRoutes(array $config)
+    {
+        $this->routeCollection->addMany($config);
     }
 }

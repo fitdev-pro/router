@@ -2,6 +2,8 @@
 
 namespace FitdevPro\FitRouter;
 
+use Assert\Assertion;
+
 /**
  * Class RouteCollection
  * @package FitdevPro\FitRouter
@@ -30,6 +32,8 @@ class RouteCollection
      */
     public function addMany(array $configs)
     {
+        Assertion::keyExists($configs, 'routeCollection');
+
         foreach ($configs['routeCollection'] as $url => $config) {
             if (isset($config['group'])) {
                 $this->addRouteGroup($url, $config);
