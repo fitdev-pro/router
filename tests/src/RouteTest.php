@@ -9,46 +9,28 @@ class RouteTest extends FitTest
 {
     public function testRouteUrl()
     {
-        $route = new Route('test/', ['controller' => 'test']);
+        $route = new Route('test/', 'test');
 
         $this->assertEquals('/test', $route->getUrl());
     }
 
     public function testRouteController()
     {
-        $route = new Route('test/', ['controller' => 'testController']);
+        $route = new Route('test/', 'testController');
 
         $this->assertEquals('testController', $route->getController());
     }
 
-    /**
-     * @expectedException \Assert\InvalidArgumentException
-     * @expectedExceptionCode 26
-     */
-    public function testRouteNoControllerException()
-    {
-        new Route('test/', []);
-    }
-
-    /**
-     * @expectedException \Assert\InvalidArgumentException
-     * @expectedExceptionCode 16
-     */
-    public function testRouteBadControllerException()
-    {
-        new Route('test/', ['controller' => []]);
-    }
-
     public function testRouteWithName()
     {
-        $route = new Route('test', ['controller' => 'test', 'alias' => 'POST']);
+        $route = new Route('test', 'test', ['alias' => 'POST']);
 
         $this->assertEquals('POST', $route->getAlias());
     }
 
     public function testRouteWithoutName()
     {
-        $route = new Route('test', ['controller' => 'test']);
+        $route = new Route('test', 'test');
 
         $this->assertEquals('test', $route->getAlias());
     }
@@ -59,19 +41,19 @@ class RouteTest extends FitTest
      */
     public function testRouteWithNameException()
     {
-        new Route('test', ['controller' => 'test', 'alias' => 1]);
+        new Route('test', 'test', ['alias' => 1]);
     }
 
     public function testRouteWithMethod()
     {
-        $route = new Route('test', ['controller' => 'test', 'methods' => ['POST']]);
+        $route = new Route('test', 'test', ['methods' => ['POST']]);
 
         $this->assertEquals(['POST'], $route->getMethods());
     }
 
     public function testRouteWithMethodString()
     {
-        $route = new Route('test', ['controller' => 'test', 'methods' => 'POST']);
+        $route = new Route('test', 'test', ['methods' => 'POST']);
 
         $this->assertEquals(['POST'], $route->getMethods());
     }
@@ -82,14 +64,14 @@ class RouteTest extends FitTest
      */
     public function testRouteWithMethodException()
     {
-        $route = new Route('test', ['controller' => 'test', 'methods' => 1]);
+        $route = new Route('test', 'test', ['methods' => 1]);
 
         $this->assertEquals(['POST'], $route->getMethods());
     }
 
     public function testRouteWithParams()
     {
-        $route = new Route('test', ['controller' => 'test', 'parameters' => ['test' => true]]);
+        $route = new Route('test', 'test', ['parameters' => ['test' => true]]);
 
         $this->assertEquals(['test' => true], $route->getParameters());
     }
@@ -100,14 +82,14 @@ class RouteTest extends FitTest
      */
     public function testRouteWithParamsException()
     {
-        $route = new Route('test', ['controller' => 'test', 'parameters' => 'test']);
+        $route = new Route('test', 'test', ['parameters' => 'test']);
 
         $this->assertEquals(['test' => true], $route->getParameters());
     }
 
     public function testRouteAddParams()
     {
-        $route = new Route('test', ['controller' => 'test', 'parameters' => ['test' => true]]);
+        $route = new Route('test', 'test', ['parameters' => ['test' => true]]);
 
         $route->addParameters(['test2' => 'foo']);
 
@@ -116,9 +98,9 @@ class RouteTest extends FitTest
 
     public function testRouteWithValidation()
     {
-        $route = new Route('test', ['controller' => 'test', 'validation' => ['test' => true]]);
+        $route = new Route('test', 'test', ['param-validation' => ['test' => true]]);
 
-        $this->assertEquals(['test' => true], $route->getValidation());
+        $this->assertEquals(['test' => true], $route->getParamValidation());
     }
 
     /**
@@ -127,7 +109,7 @@ class RouteTest extends FitTest
      */
     public function testRouteWithValidationException()
     {
-        $route = new Route('test', ['controller' => 'test', 'validation' => 'test']);
+        $route = new Route('test', 'test', ['param-validation' => 'test']);
 
         $this->assertEquals(['test' => true], $route->getParameters());
     }

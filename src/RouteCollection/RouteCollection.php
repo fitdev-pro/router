@@ -20,12 +20,12 @@ class RouteCollection implements IRouteCollection
     }
 
     /**
-     * @param string $resource
+     * @param string $url
      * @param array $config
      */
-    private function create(string $resource, array $config)
+    private function create(string $url, array $config)
     {
-        $this->add(new Route($resource, $config));
+        $this->add(new Route($url, $config['controller'], $config));
     }
 
     /**

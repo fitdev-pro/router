@@ -12,8 +12,8 @@ class RouteCollectionTest extends FitTest
     {
         $collection1 = new RouteCollection();
 
-        $collection1->add(new Route('test', ['controller' => 'test']));
-        $collection1->add(new Route('test', ['controller' => 'test', 'alias' => 'test2']));
+        $collection1->add(new Route('test', 'test'));
+        $collection1->add(new Route('test', 'test', ['alias' => 'test2']));
 
         $this->assertIsArray($collection1->getAll());
         $this->assertCount(2, $collection1->getAll());

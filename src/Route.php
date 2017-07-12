@@ -35,10 +35,10 @@ class Route
      * @param string $url
      * @param array $config
      */
-    public function __construct(string $url, array $config)
+    public function __construct(string $url, string $controller, array $config = [])
     {
         $this->setUrl($url);
-        $this->setController($config);
+        $this->setController($controller);
         $this->setAlias($config);
         $this->setMethods($config);
         $this->setParams($config);
@@ -60,12 +60,9 @@ class Route
         return $this->controller;
     }
 
-    private function setController(array $config)
+    private function setController($controller)
     {
-        Assertion::keyExists($config, 'controller');
-        Assertion::string($config['controller']);
-
-        $this->controller = $config['controller'];
+        $this->controller = $controller;
     }
 
     public function getAlias()
