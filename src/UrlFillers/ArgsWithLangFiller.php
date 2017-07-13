@@ -18,9 +18,9 @@ class ArgsWithLangFiller extends ArgsFiller
     }
 
 
-    public function fill(Route $route, array $params): string
+    public function getUrl(Route $route, array $params): string
     {
-        $url = parent::fill($route, $params);
+        $url = parent::getUrl($route, $params);
         $url = '/' . $this->lang . '/' . trim($url, '/');
 
         return $url;

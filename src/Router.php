@@ -48,10 +48,11 @@ class Router
                 $this->routeFiller->fill($route);
             }
 
-            return $route;
         } catch (RouterException $e) {
-            return null;
+            $route = null;
         }
+
+        return $route;
     }
 
     public function generate($routePath, array $params = [])
@@ -59,7 +60,7 @@ class Router
         $route = $this->routeCollection->get($routePath);
 
         if (!is_null($this->urlFiller)) {
-            $url = $this->urlFiller->fill($route, $params);
+            $url = $this->urlFiller->getUrl($route, $params);
         } else {
             $url = $route->getUrl();
         }

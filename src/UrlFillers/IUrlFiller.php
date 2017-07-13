@@ -6,5 +6,5 @@ use FitdevPro\FitRouter\Route;
 
 interface IUrlFiller
 {
-    public function fill(Route $route, array $params): string;
+    public function getUrl(Route $route, array $params): string;
 }

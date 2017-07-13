@@ -8,7 +8,7 @@ use FitdevPro\FitRouter\Route;
 class ArgsFiller implements IUrlFiller
 {
 
-    public function fill(Route $route, array $params): string
+    public function getUrl(Route $route, array $params): string
     {
         $url = $route->getUrl();
 
