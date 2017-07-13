@@ -1,6 +1,6 @@
 <?php
 
-namespace FitdevPro\FitRouter\RouteMatcher;
+namespace FitdevPro\FitRouter\RouteMatchers;
 
 use Assert\Assertion;
 use FitdevPro\FitRouter\Request\IRequest;

@@ -18,7 +18,7 @@ class HMVCFiller extends MVCFiller
         $out['controller'] = array_shift($path);
         $out['action'] = array_shift($path);
 
-        $out['attr'] = $this->extractParamsValues($route);
+        $out['params'] = $this->extractParamsValues($route);
 
         $route->addParameters($out);
     }

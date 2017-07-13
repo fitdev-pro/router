@@ -3,11 +3,11 @@
 namespace FitdevPro\FitRouter\Tests;
 
 use FitdevPro\FitRouter\Exception\MatcherException;
-use FitdevPro\FitRouter\Request\CustomRequest;
+use FitdevPro\FitRouter\Request\IRequest;
 use FitdevPro\FitRouter\Route;
-use FitdevPro\FitRouter\RouteCollection\RouteCollection;
-use FitdevPro\FitRouter\RouteFillers\MVCFiller;
-use FitdevPro\FitRouter\RouteMatcher\RegexMatcher;
+use FitdevPro\FitRouter\RouteCollection\IRouteCollection;
+use FitdevPro\FitRouter\RouteFillers\IRouteFiller;
+use FitdevPro\FitRouter\RouteMatchers\IRouteMatcher;
 use FitdevPro\FitRouter\Router;
 use FitdevPro\FitRouter\TestsLib\FitTest;
 use FitdevPro\FitRouter\UrlFillers\IUrlFiller;
@@ -16,9 +16,9 @@ class RouterTest extends FitTest
 {
     public function testRouterMatch()
     {
-        $colection = $this->prophesize(RouteCollection::class);
-        $matcher = $this->prophesize(RegexMatcher::class);
-        $request = $this->prophesize(CustomRequest::class);
+        $colection = $this->prophesize(IRouteCollection::class);
+        $matcher = $this->prophesize(IRouteMatcher::class);
+        $request = $this->prophesize(IRequest::class);
 
         $route = $this->prophesize(Route::class);
         $route->getAlias()->willReturn('test_route');
@@ -33,9 +33,9 @@ class RouterTest extends FitTest
 
     public function testRouterMatchNotFound()
     {
-        $colection = $this->prophesize(RouteCollection::class);
-        $matcher = $this->prophesize(RegexMatcher::class);
-        $request = $this->prophesize(CustomRequest::class);
+        $colection = $this->prophesize(IRouteCollection::class);
+        $matcher = $this->prophesize(IRouteMatcher::class);
+        $request = $this->prophesize(IRequest::class);
 
         $matcher->match($colection, $request)->willThrow(new MatcherException('Rout not found.'));
 
@@ -47,10 +47,10 @@ class RouterTest extends FitTest
 
     public function testRouterFiller()
     {
-        $colection = $this->prophesize(RouteCollection::class);
-        $matcher = $this->prophesize(RegexMatcher::class);
-        $request = $this->prophesize(CustomRequest::class);
-        $filler = $this->prophesize(MVCFiller::class);
+        $colection = $this->prophesize(IRouteCollection::class);
+        $matcher = $this->prophesize(IRouteMatcher::class);
+        $request = $this->prophesize(IRequest::class);
+        $filler = $this->prophesize(IRouteFiller::class);
 
         $route = $this->prophesize(Route::class);
 
@@ -64,8 +64,8 @@ class RouterTest extends FitTest
 
     public function testRouterAddRoute()
     {
-        $colection = $this->prophesize(RouteCollection::class);
-        $matcher = $this->prophesize(RegexMatcher::class);
+        $colection = $this->prophesize(IRouteCollection::class);
+        $matcher = $this->prophesize(IRouteMatcher::class);
         $route = $this->prophesize(Route::class);
 
         $colection->add($route)->shouldBeCalled();
@@ -76,8 +76,8 @@ class RouterTest extends FitTest
 
     public function testRouterLoadRoute()
     {
-        $colection = $this->prophesize(RouteCollection::class);
-        $matcher = $this->prophesize(RegexMatcher::class);
+        $colection = $this->prophesize(IRouteCollection::class);
+        $matcher = $this->prophesize(IRouteMatcher::class);
 
         $colection->load([])->shouldBeCalled();
 
@@ -87,8 +87,8 @@ class RouterTest extends FitTest
 
     public function testRouterGenerate()
     {
-        $colection = $this->prophesize(RouteCollection::class);
-        $matcher = $this->prophesize(RegexMatcher::class);
+        $colection = $this->prophesize(IRouteCollection::class);
+        $matcher = $this->prophesize(IRouteMatcher::class);
         $route = $this->prophesize(Route::class);
 
         $controller = 'foo/bar';
@@ -104,8 +104,8 @@ class RouterTest extends FitTest
 
     public function testRouterGenerateWithParams()
     {
-        $colection = $this->prophesize(RouteCollection::class);
-        $matcher = $this->prophesize(RegexMatcher::class);
+        $colection = $this->prophesize(IRouteCollection::class);
+        $matcher = $this->prophesize(IRouteMatcher::class);
         $route = $this->prophesize(Route::class);
         $urlFiller = $this->prophesize(IUrlFiller::class);
 

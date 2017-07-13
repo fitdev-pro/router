@@ -18,7 +18,7 @@ class MVCFiller implements IRouteFiller
         $out['controller'] = array_shift($path);
         $out['action'] = array_shift($path);
 
-        $out['attr'] = $this->extractParamsValues($route);
+        $out['params'] = $this->extractParamsValues($route);
 
         $route->addParameters($out);
     }
@@ -26,21 +26,19 @@ class MVCFiller implements IRouteFiller
     protected function extractParamsValues(Route $route)
     {
         $params = array();
-        $matches = $route->getParameters()['params'];
+        $userParams = $route->getParameters()['userParams'];
 
-        array_shift($matches);
-
-        if (preg_match_all('/:([\w-]+)/', $route->getUrl(), $argument_keys)) {
+        if (preg_match_all('/:([\w-]+)/', $route->getUrl(), $urlParams)) {
             // grab array with matches
-            $argument_keys = $argument_keys[1];
+            $urlParams = $urlParams[1];
 
-            if (count($argument_keys) !== count($matches)) {
-                throw new RouteFillerException('To many args.');
+            if (count($urlParams) > count($userParams)) {
+                throw new RouteFillerException('Too few parameters.');
             }
 
-            foreach ($argument_keys as $key => $name) {
-                if (isset($matches[$key])) {
-                    $params[$name] = $matches[$key];
+            foreach ($urlParams as $key => $name) {
+                if (isset($userParams[$key])) {
+                    $params[$name] = $userParams[$key];
                 }
             }
         }

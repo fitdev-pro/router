@@ -12,8 +12,11 @@ class HttpRequest implements IRequest
 
         if (isset($_POST['_method'])) {
             $_method = strtoupper($_POST['_method']);
-            if (in_array($_method, array(RequestMethodInterface::METHOD_PUT, RequestMethodInterface::METHOD_DELETE),
-                true)) {
+            if (in_array(
+                $_method,
+                array(RequestMethodInterface::METHOD_PUT, RequestMethodInterface::METHOD_DELETE),
+                true)
+            ) {
                 $requestMethod = $_method;
             }
         }

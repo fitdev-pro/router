@@ -6,7 +6,7 @@ use FitdevPro\FitRouter\Exception\RouterException;
 use FitdevPro\FitRouter\Request\IRequest;
 use FitdevPro\FitRouter\RouteCollection\IRouteCollection;
 use FitdevPro\FitRouter\RouteFillers\IRouteFiller;
-use FitdevPro\FitRouter\RouteMatcher\IRouteMatcher;
+use FitdevPro\FitRouter\RouteMatchers\IRouteMatcher;
 use FitdevPro\FitRouter\UrlFillers\IUrlFiller;
 
 class Router
