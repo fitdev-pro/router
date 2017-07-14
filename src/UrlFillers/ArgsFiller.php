@@ -7,6 +7,9 @@ use FitdevPro\FitRouter\Route;
 
 class ArgsFiller implements IUrlFiller
 {
+    const
+        TOO_FEW_PARAMS = '1815010601',
+        NO_USER_PARAMS = '1815010602';
 
     public function getUrl(Route $route, array $params): string
     {
@@ -18,7 +21,8 @@ class ArgsFiller implements IUrlFiller
             $param_keys = $param_keys[1];
 
             if (count($param_keys) > count($params)) {
-                throw new UrlFillerException('The number of parameters does not match number of values for procedure.');
+                throw new UrlFillerException('The number of parameters does not match number of values for procedure.',
+                    static::TOO_FEW_PARAMS);
             }
 
             // loop trough parameter names, store matching value in $params array
@@ -26,7 +30,8 @@ class ArgsFiller implements IUrlFiller
                 if (isset($params[$key])) {
                     $url = preg_replace('/:(\w+)/', $params[$key], $url, 1);
                 } else {
-                    throw new UrlFillerException("Parameter '$key' does not exist in sended parameters.");
+                    throw new UrlFillerException("Parameter '$key' does not exist in sended parameters.",
+                        static::NO_USER_PARAMS);
                 }
             }
         }

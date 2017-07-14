@@ -3,17 +3,17 @@
 namespace FitdevPro\FitRouter\Tests\RouteFillers;
 
 use FitdevPro\FitRouter\Route;
-use FitdevPro\FitRouter\RouteFillers\MVCFiller;
+use FitdevPro\FitRouter\RouteFillers\HMVCFiller;
 use FitdevPro\FitRouter\TestsLib\FitTest;
 use Prophecy\Argument;
 
-class MVCFillerTest extends FitTest
+class HMVCFillerTest extends FitTest
 {
     public function testFill()
     {
-        $filler = new MVCFiller();
+        $filler = new HMVCFiller();
         $routeMock = $this->prophesize(Route::class);
-        $routeMock->getController()->willReturn('foo/bar');
+        $routeMock->getController()->willReturn('index/foo/bar');
         $routeMock->getParameters()->willReturn(['userParams' => []]);
         $routeMock->getUrl()->willReturn('cos/');
         $routeMock->addParameters(Argument::type('array'))
@@ -25,14 +25,15 @@ class MVCFillerTest extends FitTest
         $route = $routeMock->reveal();
         $filler->fill($route);
 
-        $this->assertEquals(['controller' => 'foo', 'action' => 'bar', 'params' => []], $newParams);
+        $this->assertEquals(['module' => 'index', 'controller' => 'foo', 'action' => 'bar', 'params' => []],
+            $newParams);
     }
 
     public function testFillWithParams()
     {
-        $filler = new MVCFiller();
+        $filler = new HMVCFiller();
         $routeMock = $this->prophesize(Route::class);
-        $routeMock->getController()->willReturn('foo/bar');
+        $routeMock->getController()->willReturn('index/foo/bar');
         $routeMock->getParameters()->willReturn(['userParams' => ['13', 'xxx']]);
         $routeMock->getUrl()->willReturn('/cos/:id/:name');
         $routeMock->addParameters(Argument::type('array'))
@@ -44,19 +45,24 @@ class MVCFillerTest extends FitTest
         $route = $routeMock->reveal();
         $filler->fill($route);
 
-        $this->assertEquals(['controller' => 'foo', 'action' => 'bar', 'params' => ['id' => 13, 'name' => 'xxx']],
+        $this->assertEquals([
+            'module' => 'index',
+            'controller' => 'foo',
+            'action' => 'bar',
+            'params' => ['id' => 13, 'name' => 'xxx']
+        ],
             $newParams);
     }
 
     /**
      * @expectedException \FitdevPro\FitRouter\Exception\RouteFillerException
-     * @expectedExceptionCode 1815130601
+     * @expectedExceptionCode 1815080601
      */
     public function testFillWithTooFewParams()
     {
-        $filler = new MVCFiller();
+        $filler = new HMVCFiller();
         $routeMock = $this->prophesize(Route::class);
-        $routeMock->getController()->willReturn('foo/bar');
+        $routeMock->getController()->willReturn('index/foo/bar');
         $routeMock->getParameters()->willReturn(['userParams' => ['13']]);
         $routeMock->getUrl()->willReturn('/cos/:id/:name');
         $routeMock->addParameters(Argument::type('array'))
@@ -71,13 +77,13 @@ class MVCFillerTest extends FitTest
 
     /**
      * @expectedException \FitdevPro\FitRouter\Exception\RouteFillerException
-     * @expectedExceptionCode 1815130602
+     * @expectedExceptionCode 1815080602
      */
     public function testFillWithNoParams()
     {
-        $filler = new MVCFiller();
+        $filler = new HMVCFiller();
         $routeMock = $this->prophesize(Route::class);
-        $routeMock->getController()->willReturn('foo/bar');
+        $routeMock->getController()->willReturn('index/foo/bar');
         $routeMock->getParameters()->willReturn([]);
         $routeMock->getUrl()->willReturn('/cos/:id/:name');
         $routeMock->addParameters(Argument::type('array'))
@@ -92,13 +98,13 @@ class MVCFillerTest extends FitTest
 
     /**
      * @expectedException \FitdevPro\FitRouter\Exception\RouteFillerException
-     * @expectedExceptionCode 1815130603
+     * @expectedExceptionCode 1815080603
      */
     public function testFillWithBadController()
     {
-        $filler = new MVCFiller();
+        $filler = new HMVCFiller();
         $routeMock = $this->prophesize(Route::class);
-        $routeMock->getController()->willReturn('foo');
+        $routeMock->getController()->willReturn('foo/bar');
         $routeMock->getParameters()->willReturn([]);
         $routeMock->getUrl()->willReturn('/cos/:id/:name');
         $routeMock->addParameters(Argument::type('array'))

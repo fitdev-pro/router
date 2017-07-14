@@ -6,6 +6,10 @@ use FitdevPro\FitRouter\Route;
 
 class ArgsWithLangFiller extends ArgsFiller
 {
+    const
+        TOO_FEW_PARAMS = '1815120601',
+        NO_USER_PARAMS = '1815120602';
+
     private $lang;
 
     /**

@@ -9,10 +9,10 @@ use FitdevPro\FitRouter\RouteCollection\IRouteCollection;
 
 class RegexMatcher implements IRouteMatcher
 {
-    const   EXCEPTION_PREFIX = '18151813',
-        ROUTE_NOT_FOUND = self::EXCEPTION_PREFIX . '001',
-        METHOD_NOT_ALLOWD = self::EXCEPTION_PREFIX . '002',
-        ROUTE_NOT_MATCH = self::EXCEPTION_PREFIX . '003';
+    const
+        ROUTE_NOT_FOUND = '1815181301',
+        METHOD_NOT_ALLOWD = '1815181302',
+        ROUTE_NOT_MATCH = '1815181303';
 
     public function match(IRouteCollection $routeCollection, IRequest $request): Route
     {

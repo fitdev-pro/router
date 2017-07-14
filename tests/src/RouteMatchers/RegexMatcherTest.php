@@ -109,7 +109,7 @@ class RegexMatcherTest extends FitTest
 
     /**
      * @expectedException \FitdevPro\FitRouter\Exception\MatcherException
-     * @expectedExceptionCode 18151813001
+     * @expectedExceptionCode 1815181301
      */
     public function testMatchBadParam()
     {
@@ -126,7 +126,7 @@ class RegexMatcherTest extends FitTest
 
     /**
      * @expectedException \FitdevPro\FitRouter\Exception\MatcherException
-     * @expectedExceptionCode 18151813001
+     * @expectedExceptionCode 1815181301
      */
     public function testMatchBadMethod()
     {
