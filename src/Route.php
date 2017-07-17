@@ -55,7 +55,7 @@ class Route
         $this->url = '/' . trim($url, '/');
     }
 
-    public function getController()
+    public function getController(): string
     {
         return $this->controller;
     }
@@ -65,7 +65,7 @@ class Route
         $this->controller = $controller;
     }
 
-    public function getAlias()
+    public function getAlias(): string
     {
         if (is_null($this->alias)) {
             return $this->getController();
