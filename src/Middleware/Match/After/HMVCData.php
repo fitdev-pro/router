@@ -1,12 +1,13 @@
 <?php
 
-namespace FitdevPro\FitRouter\RouteFillers;
+namespace FitdevPro\FitRouter\Middleware\Match\After;
 
 use Assert\InvalidArgumentException;
 use FitdevPro\FitRouter\Exception\RouteFillerException;
+use FitdevPro\FitRouter\Middleware\AfterMatch\MVCData;
 use FitdevPro\FitRouter\Route;
 
-class HMVCFiller extends MVCFiller
+class HMVCData extends MVCData
 {
     const
         TOO_FEW_PARAMS = '1815080601',
@@ -15,7 +16,8 @@ class HMVCFiller extends MVCFiller
 
     protected $segments = 3;
 
-    public function fill(Route $route)
+
+    public function __invoke(Route $route, callable $next)
     {
         try {
             $out = [];
@@ -32,5 +34,9 @@ class HMVCFiller extends MVCFiller
         } catch (InvalidArgumentException $e) {
             throw new RouteFillerException($e->getMessage(), static::INVALID_CONTROLLER);
         }
+
+        $route = $next($route);
+
+        return $route;
     }
 }

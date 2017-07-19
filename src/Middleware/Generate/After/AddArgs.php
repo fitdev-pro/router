@@ -3,17 +3,20 @@
 namespace FitdevPro\FitRouter\UrlFillers;
 
 use FitdevPro\FitRouter\Exception\UrlFillerException;
-use FitdevPro\FitRouter\Route;
+use FitdevPro\FitRouter\Middleware\Generate\IAfterGenerateMiddleware;
+use FitdevPro\FitRouter\UrlGenerator;
 
-class ArgsFiller implements IUrlFiller
+class AddArgs implements IAfterGenerateMiddleware
 {
     const
         TOO_FEW_PARAMS = '1815010601',
         NO_USER_PARAMS = '1815010602';
 
-    public function getUrl(Route $route, array $params): string
+    public function __invoke(UrlGenerator $generator, callable $next)
     {
-        $url = $route->getUrl();
+        $url = $generator->getUrl();
+
+        $params = $generator->getParams();
 
         // replace route url with given parameters
         if ($params && preg_match_all('/:(\w+)/', $url, $param_keys)) {
@@ -36,6 +39,8 @@ class ArgsFiller implements IUrlFiller
             }
         }
 
-        return $url;
+        $generator = $next($generator);
+
+        return $generator;
     }
 }

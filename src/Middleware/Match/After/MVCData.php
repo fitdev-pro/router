@@ -1,13 +1,14 @@
 <?php
 
-namespace FitdevPro\FitRouter\RouteFillers;
+namespace FitdevPro\FitRouter\Middleware\Match\After;
 
 use Assert\Assertion;
 use Assert\InvalidArgumentException;
 use FitdevPro\FitRouter\Exception\RouteFillerException;
+use FitdevPro\FitRouter\Middleware\Match\IAfterMatchMiddleware;
 use FitdevPro\FitRouter\Route;
 
-class MVCFiller implements IRouteFiller
+class MVCData implements IAfterMatchMiddleware
 {
     const
         TOO_FEW_PARAMS = '1815130601',
@@ -16,12 +17,14 @@ class MVCFiller implements IRouteFiller
 
     protected $segments = 2;
 
-    public function fill(Route $route)
+    public function __invoke(Route $route, callable $next)
     {
         try {
             $out = [];
 
             $path = $this->extractControllerInfo($route);
+
+            $out['module'] = array_shift($path);
             $out['controller'] = array_shift($path);
             $out['action'] = array_shift($path);
 
@@ -31,6 +34,10 @@ class MVCFiller implements IRouteFiller
         } catch (InvalidArgumentException $e) {
             throw new RouteFillerException($e->getMessage(), static::INVALID_CONTROLLER);
         }
+
+        $route = $next($route);
+
+        return $route;
     }
 
     protected function extractParamsValues(Route $route)
