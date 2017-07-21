@@ -6,14 +6,13 @@ use FitdevPro\FitMiddleware\MiddlewareHundler;
 use FitdevPro\FitMiddleware\Queue;
 use FitdevPro\FitMiddleware\Resolver;
 use FitdevPro\FitRouter\Exception\RouterException;
-use FitdevPro\FitRouter\Middleware\Generate\IAfterGenerateMiddleware;
-use FitdevPro\FitRouter\Middleware\Generate\IBeforeGenerateMiddleware;
 use FitdevPro\FitRouter\Middleware\IRouterMiddleware;
 use FitdevPro\FitRouter\Middleware\Match\IAfterMatchMiddleware;
 use FitdevPro\FitRouter\Middleware\Match\IBeforeMatchMiddleware;
 use FitdevPro\FitRouter\Request\IRequest;
 use FitdevPro\FitRouter\RouteCollection\IRouteCollection;
 use FitdevPro\FitRouter\RouteMatchers\IRouteMatcher;
+use FitdevPro\FitRouter\UrlGenerator\IUrlGenerator;
 
 class Router
 {
@@ -23,19 +22,24 @@ class Router
     /** @var  IRouteMatcher */
     protected $routeMatcher;
 
+    protected $urlGenerator;
+
     protected $midlewares = [];
 
     /**
      * Router constructor.
      * @param IRouteCollection $routeCollection
      * @param IRouteMatcher $routeMatcher
+     * @param IUrlGenerator $urlGenerator
      */
     public function __construct(
         IRouteCollection $routeCollection,
-        IRouteMatcher $routeMatcher
+        IRouteMatcher $routeMatcher,
+        IUrlGenerator $urlGenerator = null
     ) {
         $this->routeCollection = $routeCollection;
         $this->routeMatcher = $routeMatcher;
+        $this->urlGenerator = $urlGenerator;
     }
 
     public function appendMiddleware(IRouterMiddleware $middleware)
@@ -85,30 +89,12 @@ class Router
 
     public function generate($routeController, array $params = [])
     {
-        /** @var UrlGenerator $url */
-        $url = new UrlGenerator($routeController, $params);
-
-        $url = $this->beforeGenerateHundle($url);
-
-        $url->setRoute($this->routeCollection->get($url->getRouteController()));
-
-        $url = $this->afterGenerateHundle($url);
-
-        return $url->getUrl();
-    }
-
-    protected function beforeGenerateHundle($request)
-    {
-        $hundler = $this->getMiddlewareHundler(IBeforeGenerateMiddleware::class);
-
-        return $hundler->hundle($request);
-    }
-
-    protected function afterGenerateHundle($route)
-    {
-        $hundler = $this->getMiddlewareHundler(IAfterGenerateMiddleware::class);
-
-        return $hundler->hundle($route);
+        if (is_null($this->urlGenerator)) {
+            $route = $this->routeCollection->get($routeController);
+            return $route->getUrl();
+        } else {
+            return $this->urlGenerator->generate($routeController, $params);
+        }
     }
 
     public function addRoute(Route $route)

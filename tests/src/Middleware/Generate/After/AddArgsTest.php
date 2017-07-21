@@ -2,19 +2,26 @@
 
 namespace FitdevPro\FitRouter\Tests\UrlFillers;
 
+use FitdevPro\FitRouter\Middleware\Generate\After\AddArgs;
 use FitdevPro\FitRouter\Route;
 use FitdevPro\FitRouter\TestsLib\FitTest;
-use FitdevPro\FitRouter\UrlFillers\ArgsFiller;
 
-class ArgsFillerTest extends FitTest
+class AddArgsTest extends FitTest
 {
+    private function getEndCallback()
+    {
+        return function ($data) {
+            return $data;
+        };
+    }
+
     public function testFillNoParams()
     {
-        $route = $this->prophesize(Route::class);
-        $route->getUrl()->willReturn('test');
-        $urlFiller = new ArgsFiller();
+        $urlMiddleware = new AddArgs();
 
-        $this->assertEquals('test', $urlFiller->getUrl($route->reveal(), []));
+        $output = $urlMiddleware(['url' => 'test', 'params' => []], $this->getEndCallback());
+
+        $this->assertEquals('test', $output['url']);
     }
 
     public function testFill()

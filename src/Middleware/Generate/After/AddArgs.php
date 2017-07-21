@@ -1,10 +1,9 @@
 <?php
 
-namespace FitdevPro\FitRouter\UrlFillers;
+namespace FitdevPro\FitRouter\Middleware\Generate\After;
 
-use FitdevPro\FitRouter\Exception\UrlFillerException;
+use FitdevPro\FitRouter\Exception\MiddlewareException;
 use FitdevPro\FitRouter\Middleware\Generate\IAfterGenerateMiddleware;
-use FitdevPro\FitRouter\UrlGenerator;
 
 class AddArgs implements IAfterGenerateMiddleware
 {
@@ -12,11 +11,10 @@ class AddArgs implements IAfterGenerateMiddleware
         TOO_FEW_PARAMS = '1815010601',
         NO_USER_PARAMS = '1815010602';
 
-    public function __invoke(UrlGenerator $generator, callable $next)
+    public function __invoke(array $data, callable $next)
     {
-        $url = $generator->getUrl();
-
-        $params = $generator->getParams();
+        $url = $data['url'];
+        $params = $data['params'];
 
         // replace route url with given parameters
         if ($params && preg_match_all('/:(\w+)/', $url, $param_keys)) {
@@ -24,7 +22,7 @@ class AddArgs implements IAfterGenerateMiddleware
             $param_keys = $param_keys[1];
 
             if (count($param_keys) > count($params)) {
-                throw new UrlFillerException('The number of parameters does not match number of values for procedure.',
+                throw new MiddlewareException('The number of parameters does not match number of values for procedure.',
                     static::TOO_FEW_PARAMS);
             }
 
@@ -33,14 +31,17 @@ class AddArgs implements IAfterGenerateMiddleware
                 if (isset($params[$key])) {
                     $url = preg_replace('/:(\w+)/', $params[$key], $url, 1);
                 } else {
-                    throw new UrlFillerException("Parameter '$key' does not exist in sended parameters.",
+                    throw new MiddlewareException("Parameter '$key' does not exist in sended parameters.",
                         static::NO_USER_PARAMS);
                 }
             }
+
+            $data['url'] = $url;
         }
 
-        $generator = $next($generator);
 
-        return $generator;
+        $data = $next($data);
+
+        return $data;
     }
 }
