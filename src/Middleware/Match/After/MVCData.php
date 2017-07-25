@@ -4,7 +4,7 @@ namespace FitdevPro\FitRouter\Middleware\Match\After;
 
 use Assert\Assertion;
 use Assert\InvalidArgumentException;
-use FitdevPro\FitRouter\Exception\RouteFillerException;
+use FitdevPro\FitRouter\Exception\MiddlewareException;
 use FitdevPro\FitRouter\Middleware\Match\IAfterMatchMiddleware;
 use FitdevPro\FitRouter\Route;
 
@@ -17,14 +17,13 @@ class MVCData implements IAfterMatchMiddleware
 
     protected $segments = 2;
 
-    public function __invoke(Route $route, callable $next)
+    public function __invoke($data, Route $route, callable $next)
     {
         try {
             $out = [];
 
             $path = $this->extractControllerInfo($route);
 
-            $out['module'] = array_shift($path);
             $out['controller'] = array_shift($path);
             $out['action'] = array_shift($path);
 
@@ -32,10 +31,10 @@ class MVCData implements IAfterMatchMiddleware
 
             $route->addParameters($out);
         } catch (InvalidArgumentException $e) {
-            throw new RouteFillerException($e->getMessage(), static::INVALID_CONTROLLER);
+            throw new MiddlewareException($e->getMessage(), static::INVALID_CONTROLLER);
         }
 
-        $route = $next($route);
+        $route = $next($data, $route);
 
         return $route;
     }
@@ -46,7 +45,7 @@ class MVCData implements IAfterMatchMiddleware
         $params = $route->getParameters();
 
         if (!isset($params['userParams'])) {
-            throw new RouteFillerException('Undefinded userParams. Add passed params to route using method addParams() on kay "userParams". ',
+            throw new MiddlewareException('Undefinded userParams. Add passed params to route using method addParams() on kay "userParams". ',
                 static::NO_USER_PARAMS);
         }
 
@@ -57,7 +56,7 @@ class MVCData implements IAfterMatchMiddleware
             $urlParams = $urlParams[1];
 
             if (count($urlParams) > count($userParams)) {
-                throw new RouteFillerException('Too few parameters.', static::TOO_FEW_PARAMS);
+                throw new MiddlewareException('Too few parameters.', static::TOO_FEW_PARAMS);
             }
 
             foreach ($urlParams as $key => $name) {

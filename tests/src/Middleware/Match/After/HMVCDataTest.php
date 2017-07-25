@@ -1,17 +1,25 @@
 <?php
 
-namespace FitdevPro\FitRouter\Tests\RouteFillers;
+namespace FitdevPro\FitRouter\Tests\Middleware\Match\After;
 
+use FitdevPro\FitRouter\Middleware\Match\After\HMVCData;
 use FitdevPro\FitRouter\Route;
-use FitdevPro\FitRouter\RouteFillers\HMVCFiller;
 use FitdevPro\FitRouter\TestsLib\FitTest;
 use Prophecy\Argument;
 
-class HMVCFillerTest extends FitTest
+class HMVCDataTest extends FitTest
 {
+    private function getEndCallback()
+    {
+        return function ($data, $output) {
+            return $output;
+        };
+    }
+
     public function testFill()
     {
-        $filler = new HMVCFiller();
+        $middleware = new HMVCData();
+
         $routeMock = $this->prophesize(Route::class);
         $routeMock->getController()->willReturn('index/foo/bar');
         $routeMock->getParameters()->willReturn(['userParams' => []]);
@@ -21,9 +29,7 @@ class HMVCFillerTest extends FitTest
                 $newParams = $args[0];
             });
 
-        /** @var Route $route */
-        $route = $routeMock->reveal();
-        $filler->fill($route);
+        $middleware([], $routeMock->reveal(), $this->getEndCallback());
 
         $this->assertEquals(['module' => 'index', 'controller' => 'foo', 'action' => 'bar', 'params' => []],
             $newParams);
@@ -31,7 +37,8 @@ class HMVCFillerTest extends FitTest
 
     public function testFillWithParams()
     {
-        $filler = new HMVCFiller();
+        $middleware = new HMVCData();
+
         $routeMock = $this->prophesize(Route::class);
         $routeMock->getController()->willReturn('index/foo/bar');
         $routeMock->getParameters()->willReturn(['userParams' => ['13', 'xxx']]);
@@ -41,9 +48,7 @@ class HMVCFillerTest extends FitTest
                 $newParams = $args[0];
             });
 
-        /** @var Route $route */
-        $route = $routeMock->reveal();
-        $filler->fill($route);
+        $middleware([], $routeMock->reveal(), $this->getEndCallback());
 
         $this->assertEquals([
             'module' => 'index',
@@ -55,12 +60,13 @@ class HMVCFillerTest extends FitTest
     }
 
     /**
-     * @expectedException \FitdevPro\FitRouter\Exception\RouteFillerException
+     * @expectedException \FitdevPro\FitRouter\Exception\MiddlewareException
      * @expectedExceptionCode 1815080601
      */
     public function testFillWithTooFewParams()
     {
-        $filler = new HMVCFiller();
+        $middleware = new HMVCData();
+
         $routeMock = $this->prophesize(Route::class);
         $routeMock->getController()->willReturn('index/foo/bar');
         $routeMock->getParameters()->willReturn(['userParams' => ['13']]);
@@ -70,18 +76,17 @@ class HMVCFillerTest extends FitTest
                 $newParams = $args[0];
             });
 
-        /** @var Route $route */
-        $route = $routeMock->reveal();
-        $filler->fill($route);
+        $middleware([], $routeMock->reveal(), $this->getEndCallback());
     }
 
     /**
-     * @expectedException \FitdevPro\FitRouter\Exception\RouteFillerException
+     * @expectedException \FitdevPro\FitRouter\Exception\MiddlewareException
      * @expectedExceptionCode 1815080602
      */
     public function testFillWithNoParams()
     {
-        $filler = new HMVCFiller();
+        $middleware = new HMVCData();
+
         $routeMock = $this->prophesize(Route::class);
         $routeMock->getController()->willReturn('index/foo/bar');
         $routeMock->getParameters()->willReturn([]);
@@ -91,18 +96,17 @@ class HMVCFillerTest extends FitTest
                 $newParams = $args[0];
             });
 
-        /** @var Route $route */
-        $route = $routeMock->reveal();
-        $filler->fill($route);
+        $middleware([], $routeMock->reveal(), $this->getEndCallback());
     }
 
     /**
-     * @expectedException \FitdevPro\FitRouter\Exception\RouteFillerException
+     * @expectedException \FitdevPro\FitRouter\Exception\MiddlewareException
      * @expectedExceptionCode 1815080603
      */
     public function testFillWithBadController()
     {
-        $filler = new HMVCFiller();
+        $middleware = new HMVCData();
+
         $routeMock = $this->prophesize(Route::class);
         $routeMock->getController()->willReturn('foo/bar');
         $routeMock->getParameters()->willReturn([]);
@@ -112,8 +116,6 @@ class HMVCFillerTest extends FitTest
                 $newParams = $args[0];
             });
 
-        /** @var Route $route */
-        $route = $routeMock->reveal();
-        $filler->fill($route);
+        $middleware([], $routeMock->reveal(), $this->getEndCallback());
     }
 }

@@ -6,5 +6,5 @@ use FitdevPro\FitRouter\Middleware\IRouterMiddleware;
 
 interface IBeforeGenerateMiddleware extends IRouterMiddleware
 {
-    public function __invoke(string $routeController, callable $next);
+    public function __invoke(array $params, string $routeController, callable $next);
 }

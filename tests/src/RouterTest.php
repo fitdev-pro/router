@@ -57,8 +57,8 @@ class RouterTest extends FitTest
 
         $route = $this->prophesize(Route::class);
 
-        $before->__invoke($request, Argument::any())->shouldBeCalled()->willReturn($request);
-        $after->__invoke($route, Argument::any())->shouldBeCalled()->willReturn($route);
+        $before->__invoke(null, $request, Argument::any())->shouldBeCalled()->willReturn($request);
+        $after->__invoke(null, $route, Argument::any())->shouldBeCalled()->willReturn($route);
 
         $matcher->match($colection, $request)->willReturn($route->reveal());
 

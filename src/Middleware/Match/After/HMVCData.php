@@ -3,8 +3,7 @@
 namespace FitdevPro\FitRouter\Middleware\Match\After;
 
 use Assert\InvalidArgumentException;
-use FitdevPro\FitRouter\Exception\RouteFillerException;
-use FitdevPro\FitRouter\Middleware\AfterMatch\MVCData;
+use FitdevPro\FitRouter\Exception\MiddlewareException;
 use FitdevPro\FitRouter\Route;
 
 class HMVCData extends MVCData
@@ -17,7 +16,7 @@ class HMVCData extends MVCData
     protected $segments = 3;
 
 
-    public function __invoke(Route $route, callable $next)
+    public function __invoke($data, Route $route, callable $next)
     {
         try {
             $out = [];
@@ -32,10 +31,10 @@ class HMVCData extends MVCData
 
             $route->addParameters($out);
         } catch (InvalidArgumentException $e) {
-            throw new RouteFillerException($e->getMessage(), static::INVALID_CONTROLLER);
+            throw new MiddlewareException($e->getMessage(), static::INVALID_CONTROLLER);
         }
 
-        $route = $next($route);
+        $route = $next($data, $route);
 
         return $route;
     }

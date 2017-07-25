@@ -1,17 +1,16 @@
 <?php
 
-namespace FitdevPro\FitRouter\Tests\UrlFillers;
+namespace FitdevPro\FitRouter\Tests\Middleware\Generate\After;
 
 use FitdevPro\FitRouter\Middleware\Generate\After\AddArgs;
-use FitdevPro\FitRouter\Route;
 use FitdevPro\FitRouter\TestsLib\FitTest;
 
 class AddArgsTest extends FitTest
 {
     private function getEndCallback()
     {
-        return function ($data) {
-            return $data;
+        return function ($data, $output) {
+            return $output;
         };
     }
 
@@ -19,43 +18,39 @@ class AddArgsTest extends FitTest
     {
         $urlMiddleware = new AddArgs();
 
-        $output = $urlMiddleware(['url' => 'test', 'params' => []], $this->getEndCallback());
+        $output = $urlMiddleware(['params' => []], 'test', $this->getEndCallback());
 
-        $this->assertEquals('test', $output['url']);
+        $this->assertEquals('test', $output);
     }
 
     public function testFill()
     {
-        $route = $this->prophesize(Route::class);
-        $route->getUrl()->willReturn('test/:name');
-        $urlFiller = new ArgsFiller();
+        $urlMiddleware = new AddArgs();
 
-        $this->assertEquals('test/bazz', $urlFiller->getUrl($route->reveal(), ['name' => 'bazz']));
+        $output = $urlMiddleware(['params' => ['name' => 'bazz']], 'test/:name/bar', $this->getEndCallback());
+
+        $this->assertEquals('test/bazz/bar', $output);
     }
 
     /**
-     * @expectedException \FitdevPro\FitRouter\Exception\UrlFillerException
+     * @expectedException \FitdevPro\FitRouter\Exception\MiddlewareException
      * @expectedExceptionCode 1815010601
      */
     public function testFillTooFewArgs()
     {
-        $route = $this->prophesize(Route::class);
-        $route->getUrl()->willReturn('test/:name/:id');
-        $urlFiller = new ArgsFiller();
+        $urlMiddleware = new AddArgs();
 
-        $this->assertEquals('test/bazz', $urlFiller->getUrl($route->reveal(), ['name' => 'bazz']));
+        $urlMiddleware(['params' => ['name' => 'bazz']], 'test/:name/:bar', $this->getEndCallback());
     }
 
     /**
-     * @expectedException \FitdevPro\FitRouter\Exception\UrlFillerException
+     * @expectedException \FitdevPro\FitRouter\Exception\MiddlewareException
      * @expectedExceptionCode 1815010602
      */
     public function testFillBadArgs()
     {
-        $route = $this->prophesize(Route::class);
-        $route->getUrl()->willReturn('test/:name/:id');
-        $urlFiller = new ArgsFiller();
+        $urlMiddleware = new AddArgs();
 
-        $this->assertEquals('test/bazz', $urlFiller->getUrl($route->reveal(), ['name' => 'bazz', 'di' => 1]));
+        $urlMiddleware(['params' => ['name' => 'bazz', 'di' => 1]], 'test/:name/:id', $this->getEndCallback());
     }
 }

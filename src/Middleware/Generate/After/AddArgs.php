@@ -11,13 +11,12 @@ class AddArgs implements IAfterGenerateMiddleware
         TOO_FEW_PARAMS = '1815010601',
         NO_USER_PARAMS = '1815010602';
 
-    public function __invoke(array $data, callable $next)
+    public function __invoke(array $data, string $url, callable $next)
     {
-        $url = $data['url'];
         $params = $data['params'];
 
         // replace route url with given parameters
-        if ($params && preg_match_all('/:(\w+)/', $url, $param_keys)) {
+        if (preg_match_all('/:(\w+)/', $url, $param_keys)) {
             // grab array with matches
             $param_keys = $param_keys[1];
 
@@ -35,12 +34,10 @@ class AddArgs implements IAfterGenerateMiddleware
                         static::NO_USER_PARAMS);
                 }
             }
-
-            $data['url'] = $url;
         }
 
 
-        $data = $next($data);
+        $data = $next($data, $url);
 
         return $data;
     }

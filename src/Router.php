@@ -64,14 +64,14 @@ class Router
     {
         $hundler = $this->getMiddlewareHundler(IBeforeMatchMiddleware::class);
 
-        return $hundler->hundle($request);
+        return $hundler->hundle(null, $request);
     }
 
     protected function afterMatchHundle($route)
     {
         $hundler = $this->getMiddlewareHundler(IAfterMatchMiddleware::class);
 
-        return $hundler->hundle($route);
+        return $hundler->hundle(null, $route);
     }
 
     protected function getMiddlewareHundler($type)

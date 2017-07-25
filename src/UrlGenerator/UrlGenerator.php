@@ -5,7 +5,6 @@ namespace FitdevPro\FitRouter\UrlGenerator;
 use FitdevPro\FitMiddleware\MiddlewareHundler;
 use FitdevPro\FitMiddleware\Queue;
 use FitdevPro\FitMiddleware\Resolver;
-use FitdevPro\FitRouter\Exception\MiddlewareException;
 use FitdevPro\FitRouter\Middleware\Generate\IAfterGenerateMiddleware;
 use FitdevPro\FitRouter\Middleware\Generate\IBeforeGenerateMiddleware;
 use FitdevPro\FitRouter\Middleware\IRouterMiddleware;
@@ -33,39 +32,27 @@ class UrlGenerator implements IUrlGenerator
 
     public function generate(string $routeController, array $params = []): string
     {
-        $data = ['routeController' => $routeController, 'params' => $params];
+        $routeController = $this->beforeGenerateHundle($params, $routeController);
 
-        $data = $this->beforeGenerateHundle($data);
+        $route = $this->routeCollection->get($routeController);
 
-        if (!isset($data['routeController'])) {
-            throw new MiddlewareException('routeController is not defined in output data from before generate middleware.');
-        }
+        $url = $this->afterGenerateHundle(['route' => $route, 'params' => $params], $route->getUrl());
 
-        $route = $this->routeCollection->get($data['routeController']);
-        $data['route'] = $route;
-        $data['url'] = $route->getUrl();
-
-        $data = $this->afterGenerateHundle($data);
-
-        if (!isset($data['url'])) {
-            throw new MiddlewareException('url is not defined in output data from after generate middleware.');
-        }
-
-        return $data['url'];
+        return $url;
     }
 
-    protected function beforeGenerateHundle($request)
+    protected function beforeGenerateHundle($input, $output)
     {
         $hundler = $this->getMiddlewareHundler(IBeforeGenerateMiddleware::class);
 
-        return $hundler->hundle($request);
+        return $hundler->hundle($input, $output);
     }
 
-    protected function afterGenerateHundle($route)
+    protected function afterGenerateHundle($input, $output)
     {
         $hundler = $this->getMiddlewareHundler(IAfterGenerateMiddleware::class);
 
-        return $hundler->hundle($route);
+        return $hundler->hundle($input, $output);
     }
 
     protected function getMiddlewareHundler($type)
