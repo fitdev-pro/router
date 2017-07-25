@@ -19,6 +19,7 @@ class RouterTest extends FitTest
     public function testRouterMatch()
     {
         $colection = $this->prophesize(IRouteCollection::class);
+        $generator = $this->prophesize(IUrlGenerator::class);
         $matcher = $this->prophesize(IRouteMatcher::class);
         $request = $this->prophesize(IRequest::class);
 
@@ -27,7 +28,7 @@ class RouterTest extends FitTest
 
         $matcher->match($colection, $request)->willReturn($route->reveal());
 
-        $router = new Router($colection->reveal(), $matcher->reveal());
+        $router = new Router($colection->reveal(), $matcher->reveal(), $generator->reveal());
         $routOut = $router->match($request->reveal());
 
         $this->assertEquals('test_route', $routOut->getAlias());
@@ -36,12 +37,13 @@ class RouterTest extends FitTest
     public function testRouterMatchNotFound()
     {
         $colection = $this->prophesize(IRouteCollection::class);
+        $generator = $this->prophesize(IUrlGenerator::class);
         $matcher = $this->prophesize(IRouteMatcher::class);
         $request = $this->prophesize(IRequest::class);
 
         $matcher->match($colection, $request)->willThrow(new MatcherException('Rout not found.'));
 
-        $router = new Router($colection->reveal(), $matcher->reveal());
+        $router = new Router($colection->reveal(), $matcher->reveal(), $generator->reveal());
         $routOut = $router->match($request->reveal());
 
         $this->assertNull($routOut);
@@ -50,6 +52,7 @@ class RouterTest extends FitTest
     public function testRouterMiddlewar()
     {
         $colection = $this->prophesize(IRouteCollection::class);
+        $generator = $this->prophesize(IUrlGenerator::class);
         $matcher = $this->prophesize(IRouteMatcher::class);
         $request = $this->prophesize(IRequest::class);
         $before = $this->prophesize(IBeforeMatchMiddleware::class);
@@ -62,7 +65,7 @@ class RouterTest extends FitTest
 
         $matcher->match($colection, $request)->willReturn($route->reveal());
 
-        $router = new Router($colection->reveal(), $matcher->reveal());
+        $router = new Router($colection->reveal(), $matcher->reveal(), $generator->reveal());
         $router->appendMiddleware($after->reveal());
         $router->appendMiddleware($before->reveal());
 
@@ -72,23 +75,25 @@ class RouterTest extends FitTest
     public function testRouterAddRoute()
     {
         $colection = $this->prophesize(IRouteCollection::class);
+        $generator = $this->prophesize(IUrlGenerator::class);
         $matcher = $this->prophesize(IRouteMatcher::class);
         $route = $this->prophesize(Route::class);
 
         $colection->add($route)->shouldBeCalled();
 
-        $router = new Router($colection->reveal(), $matcher->reveal());
+        $router = new Router($colection->reveal(), $matcher->reveal(), $generator->reveal());
         $router->addRoute($route->reveal());
     }
 
     public function testRouterLoadRoute()
     {
         $colection = $this->prophesize(IRouteCollection::class);
+        $generator = $this->prophesize(IUrlGenerator::class);
         $matcher = $this->prophesize(IRouteMatcher::class);
 
         $colection->load([])->shouldBeCalled();
 
-        $router = new Router($colection->reveal(), $matcher->reveal());
+        $router = new Router($colection->reveal(), $matcher->reveal(), $generator->reveal());
         $router->loadRoutes([]);
     }
 
@@ -96,30 +101,12 @@ class RouterTest extends FitTest
     {
         $colection = $this->prophesize(IRouteCollection::class);
         $matcher = $this->prophesize(IRouteMatcher::class);
-        $route = $this->prophesize(Route::class);
+        $generator = $this->prophesize(IUrlGenerator::class);
+        $generator->setRouteCollection($colection)->shouldBeCalled();
 
-        $controller = 'foo/bar';
-        $colection->get($controller)->willReturn($route->reveal());
+        $router = new Router($colection->reveal(), $matcher->reveal(), $generator->reveal());
+        $urlGenerator = $router->getUrlGenerate();
 
-        $route->getUrl()->willReturn('foo_bar.html');
-
-        $router = new Router($colection->reveal(), $matcher->reveal());
-        $url = $router->generate($controller);
-
-        $this->assertEquals('foo_bar.html', $url);
-    }
-
-    public function testRouterGenerateWithGenerator()
-    {
-        $colection = $this->prophesize(IRouteCollection::class);
-        $matcher = $this->prophesize(IRouteMatcher::class);
-        $urlGenerator = $this->prophesize(IUrlGenerator::class);
-
-        $urlGenerator->generate(Argument::type(IRouteCollection::class), 'foo/bar', [])->willReturn('foo_bar.html');
-
-        $router = new Router($colection->reveal(), $matcher->reveal(), $urlGenerator->reveal());
-        $url = $router->generate('foo/bar');
-
-        $this->assertEquals('foo_bar.html', $url);
+        $this->assertEquals($generator->reveal(), $urlGenerator);
     }
 }

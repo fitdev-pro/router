@@ -2,11 +2,8 @@
 
 namespace FitdevPro\FitRouter\Request;
 
-class CustomRequest implements IRequest
+class CustomRequest extends Request
 {
-    private $url;
-    private $method;
-
     /**
      * CustomRequest constructor.
      * @param $url
@@ -14,18 +11,7 @@ class CustomRequest implements IRequest
      */
     public function __construct(string $url, string $method)
     {
-        $this->url = $url;
-        $this->method = $method;
-    }
-
-
-    public function getRequestMethod(): string
-    {
-        return $this->method;
-    }
-
-    public function getRequsetUrl(): string
-    {
-        return $this->url;
+        $this->setRequsetUr($url);
+        $this->setRequestMethod($method);
     }
 }

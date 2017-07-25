@@ -2,12 +2,11 @@
 
 namespace FitdevPro\FitRouter\UrlGenerator;
 
-use FitdevPro\FitRouter\Middleware\IRouterMiddleware;
 use FitdevPro\FitRouter\RouteCollection\IRouteCollection;
 
 interface IUrlGenerator
 {
-    public function appendMiddleware(IRouterMiddleware $middleware);
+    public function setRouteCollection(IRouteCollection $routeCollection);
 
-    public function generate(IRouteCollection $routeCollection, string $routeController, array $params = []): string;
+    public function generate(string $routeController, array $params = []): string;
 }

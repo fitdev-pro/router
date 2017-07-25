@@ -10,9 +10,11 @@ use FitdevPro\FitRouter\Middleware\Generate\IBeforeGenerateMiddleware;
 use FitdevPro\FitRouter\Middleware\IRouterMiddleware;
 use FitdevPro\FitRouter\RouteCollection\IRouteCollection;
 
-class UrlGenerator implements IUrlGenerator
+class UrlGeneratorWithMiddleware implements IUrlGenerator
 {
-    protected $midlewares = [];
+    /** @var  IRouteCollection */
+    private $routeCollection;
+    private $midlewares = [];
 
     public function appendMiddleware(IRouterMiddleware $middleware)
     {
@@ -27,11 +29,11 @@ class UrlGenerator implements IUrlGenerator
         $this->routeCollection = $routeCollection;
     }
 
-    public function generate(IRouteCollection $routeCollection, string $routeController, array $params = []): string
+    public function generate(string $routeController, array $params = []): string
     {
         $routeController = $this->beforeGenerateHundle($params, $routeController);
 
-        $route = $routeCollection->get($routeController);
+        $route = $this->routeCollection->get($routeController);
 
         $url = $this->afterGenerateHundle(['route' => $route, 'params' => $params], $route->getUrl());
 

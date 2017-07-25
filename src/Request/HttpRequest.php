@@ -4,9 +4,18 @@ namespace FitdevPro\FitRouter\Request;
 
 use Fig\Http\Message\RequestMethodInterface;
 
-class HttpRequest implements IRequest
+class HttpRequest extends Request
 {
-    public function getRequestMethod(): string
+    /**
+     * HttpRequest constructor.
+     */
+    public function __construct()
+    {
+        $this->setRequsetUr($this->getUrl());
+        $this->setRequestMethod($this->getMethod());
+    }
+
+    private function getMethod(): string
     {
         $requestMethod = $_SERVER['REQUEST_METHOD'];
 
@@ -24,7 +33,7 @@ class HttpRequest implements IRequest
         return $requestMethod;
     }
 
-    public function getRequsetUrl(): string
+    private function getUrl(): string
     {
         $requestUrl = $_SERVER['REQUEST_URI'];
 

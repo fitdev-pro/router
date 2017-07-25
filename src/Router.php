@@ -6,8 +6,6 @@ use FitdevPro\FitMiddleware\MiddlewareHundler;
 use FitdevPro\FitMiddleware\Queue;
 use FitdevPro\FitMiddleware\Resolver;
 use FitdevPro\FitRouter\Exception\RouterException;
-use FitdevPro\FitRouter\Middleware\Generate\IAfterGenerateMiddleware;
-use FitdevPro\FitRouter\Middleware\Generate\IBeforeGenerateMiddleware;
 use FitdevPro\FitRouter\Middleware\IRouterMiddleware;
 use FitdevPro\FitRouter\Middleware\Match\IAfterMatchMiddleware;
 use FitdevPro\FitRouter\Middleware\Match\IBeforeMatchMiddleware;
@@ -37,7 +35,7 @@ class Router
     public function __construct(
         IRouteCollection $routeCollection,
         IRouteMatcher $routeMatcher,
-        IUrlGenerator $urlGenerator = null
+        IUrlGenerator $urlGenerator
     ) {
         $this->routeCollection = $routeCollection;
         $this->routeMatcher = $routeMatcher;
@@ -89,19 +87,10 @@ class Router
         return $hundler;
     }
 
-    public function generate($routeController, array $params = [])
+    public function getUrlGenerate(): IUrlGenerator
     {
-        if (is_null($this->urlGenerator)) {
-            $route = $this->routeCollection->get($routeController);
-            return $route->getUrl();
-        } else {
-            foreach ($this->midlewares as $midleware) {
-                if ($midleware instanceof IBeforeGenerateMiddleware || $midleware instanceof IAfterGenerateMiddleware) {
-                    $this->urlGenerator->appendMiddleware($midleware);
-                }
-            }
-            return $this->urlGenerator->generate($this->routeCollection, $routeController, $params);
-        }
+        $this->urlGenerator->setRouteCollection($this->routeCollection);
+        return $this->urlGenerator;
     }
 
     public function addRoute(Route $route)

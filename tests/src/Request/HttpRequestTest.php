@@ -10,6 +10,7 @@ class HttpRequestTest extends FitTest
     public function testGetRequestMethod()
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_SERVER['REQUEST_URI'] = 'mywebside.com';
 
         $request = new HttpRequest();
 
@@ -19,6 +20,7 @@ class HttpRequestTest extends FitTest
     public function testGetRequestMethodFromPost()
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_SERVER['REQUEST_URI'] = 'mywebside.com';
         $_POST['_method'] = 'PUT';
 
         $request = new HttpRequest();
@@ -29,6 +31,7 @@ class HttpRequestTest extends FitTest
     public function testGetRequestMethodFromPostError()
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_SERVER['REQUEST_URI'] = 'mywebside.com';
         $_POST['_method'] = 'GET';
 
         $request = new HttpRequest();
