@@ -115,7 +115,7 @@ class RouterTest extends FitTest
         $matcher = $this->prophesize(IRouteMatcher::class);
         $urlGenerator = $this->prophesize(IUrlGenerator::class);
 
-        $urlGenerator->generate('foo/bar', [])->willReturn('foo_bar.html');
+        $urlGenerator->generate(Argument::type(IRouteCollection::class), 'foo/bar', [])->willReturn('foo_bar.html');
 
         $router = new Router($colection->reveal(), $matcher->reveal(), $urlGenerator->reveal());
         $url = $router->generate('foo/bar');

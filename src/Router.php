@@ -6,6 +6,8 @@ use FitdevPro\FitMiddleware\MiddlewareHundler;
 use FitdevPro\FitMiddleware\Queue;
 use FitdevPro\FitMiddleware\Resolver;
 use FitdevPro\FitRouter\Exception\RouterException;
+use FitdevPro\FitRouter\Middleware\Generate\IAfterGenerateMiddleware;
+use FitdevPro\FitRouter\Middleware\Generate\IBeforeGenerateMiddleware;
 use FitdevPro\FitRouter\Middleware\IRouterMiddleware;
 use FitdevPro\FitRouter\Middleware\Match\IAfterMatchMiddleware;
 use FitdevPro\FitRouter\Middleware\Match\IBeforeMatchMiddleware;
@@ -93,7 +95,12 @@ class Router
             $route = $this->routeCollection->get($routeController);
             return $route->getUrl();
         } else {
-            return $this->urlGenerator->generate($routeController, $params);
+            foreach ($this->midlewares as $midleware) {
+                if ($midleware instanceof IBeforeGenerateMiddleware || $midleware instanceof IAfterGenerateMiddleware) {
+                    $this->urlGenerator->appendMiddleware($midleware);
+                }
+            }
+            return $this->urlGenerator->generate($this->routeCollection, $routeController, $params);
         }
     }
 

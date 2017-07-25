@@ -12,29 +12,26 @@ use FitdevPro\FitRouter\RouteCollection\IRouteCollection;
 
 class UrlGenerator implements IUrlGenerator
 {
-    private $routeCollection;
-
     protected $midlewares = [];
-
-    /**
-     * UrlGenerator constructor.
-     * @param IRouteCollection $routeCollection
-     */
-    public function __construct($routeCollection)
-    {
-        $this->routeCollection = $routeCollection;
-    }
 
     public function appendMiddleware(IRouterMiddleware $middleware)
     {
         $this->midlewares[] = $middleware;
     }
 
-    public function generate(string $routeController, array $params = []): string
+    /**
+     * @param IRouteCollection $routeCollection
+     */
+    public function setRouteCollection(IRouteCollection $routeCollection)
+    {
+        $this->routeCollection = $routeCollection;
+    }
+
+    public function generate(IRouteCollection $routeCollection, string $routeController, array $params = []): string
     {
         $routeController = $this->beforeGenerateHundle($params, $routeController);
 
-        $route = $this->routeCollection->get($routeController);
+        $route = $routeCollection->get($routeController);
 
         $url = $this->afterGenerateHundle(['route' => $route, 'params' => $params], $route->getUrl());
 

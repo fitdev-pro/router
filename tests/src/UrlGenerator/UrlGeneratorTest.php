@@ -20,9 +20,9 @@ class MVCFillerTest extends FitTest
         $collection = $this->prophesize(IRouteCollection::class);
         $collection->get('/test/index/index')->willReturn($route->reveal());
 
-        $generator = new UrlGenerator($collection->reveal());
+        $generator = new UrlGenerator();
 
-        $url = $generator->generate('/test/index/index');
+        $url = $generator->generate($collection->reveal(), '/test/index/index');
 
         $this->assertEquals('/test/url', $url);
     }
@@ -39,10 +39,10 @@ class MVCFillerTest extends FitTest
         $middleware->__invoke(['lang' => 'pl'], '/test/index/index',
             Argument::any())->shouldBeCalled()->willReturn('/pl/test/index/index');
 
-        $generator = new UrlGenerator($collection->reveal());
+        $generator = new UrlGenerator();
         $generator->appendMiddleware($middleware->reveal());
 
-        $url = $generator->generate('/test/index/index', ['lang' => 'pl']);
+        $url = $generator->generate($collection->reveal(), '/test/index/index', ['lang' => 'pl']);
 
         $this->assertEquals('/test/url', $url);
     }
@@ -59,10 +59,10 @@ class MVCFillerTest extends FitTest
         $middleware->__invoke(['route' => $route, 'params' => ['lang' => 'pl']], '/test/url',
             Argument::any())->shouldBeCalled()->willReturn('/pl/test/url');
 
-        $generator = new UrlGenerator($collection->reveal());
+        $generator = new UrlGenerator();
         $generator->appendMiddleware($middleware->reveal());
 
-        $url = $generator->generate('/test/index/index', ['lang' => 'pl']);
+        $url = $generator->generate($collection->reveal(), '/test/index/index', ['lang' => 'pl']);
 
         $this->assertEquals('/pl/test/url', $url);
     }
@@ -83,11 +83,11 @@ class MVCFillerTest extends FitTest
         $middlewareAfter->__invoke(['route' => $route, 'params' => ['lang' => 'en']], '/test/url',
             Argument::any())->shouldBeCalled()->willReturn('/en/test/url');
 
-        $generator = new UrlGenerator($collection->reveal());
+        $generator = new UrlGenerator();
         $generator->appendMiddleware($middlewareBefore->reveal());
         $generator->appendMiddleware($middlewareAfter->reveal());
 
-        $url = $generator->generate('/test/index/index', ['lang' => 'en']);
+        $url = $generator->generate($collection->reveal(), '/test/index/index', ['lang' => 'en']);
 
         $this->assertEquals('/en/test/url', $url);
     }
