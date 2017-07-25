@@ -43,5 +43,4 @@ class HttpRequest extends Request
 
         return $requestUrl;
     }
-
 }

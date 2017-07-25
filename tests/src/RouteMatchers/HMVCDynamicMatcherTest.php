@@ -16,6 +16,7 @@ class HMVCDynamicMatcherTest extends FitTest
 
         $request->getRequestMethod()->willReturn('GET');
         $request->getRequsetUrl()->willReturn('/buzz/bar/foo/1');
+        $request->getRequestParams()->willReturn([]);
 
         $matcher = new HMVCDynamicMatcher();
         $route = $matcher->match($collection->reveal(), $request->reveal());
@@ -23,7 +24,13 @@ class HMVCDynamicMatcherTest extends FitTest
         $this->assertEquals('/buzz/bar/foo/1', $route->getUrl());
         $this->assertEquals('/buzz/bar/foo/1', $route->getController());
         $this->assertEquals('/buzz/bar/foo/1', $route->getAlias());
-        $this->assertEquals(['controller' => 'bar', 'action' => 'foo', 'module' => 'buzz', 'userParams' => [1]],
+        $this->assertEquals([
+            'controller' => 'bar',
+            'action' => 'foo',
+            'module' => 'buzz',
+            'userParams' => [1],
+            'requestParams' => []
+        ],
             $route->getParameters());
     }
 

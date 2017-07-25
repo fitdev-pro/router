@@ -16,6 +16,7 @@ class MVCDynamicMatcherTest extends FitTest
 
         $request->getRequestMethod()->willReturn('GET');
         $request->getRequsetUrl()->willReturn('/buzz/bar/foo');
+        $request->getRequestParams()->willReturn([]);
 
         $matcher = new MVCDynamicMatcher();
         $route = $matcher->match($collection->reveal(), $request->reveal());
@@ -23,7 +24,7 @@ class MVCDynamicMatcherTest extends FitTest
         $this->assertEquals('/buzz/bar/foo', $route->getUrl());
         $this->assertEquals('/buzz/bar/foo', $route->getController());
         $this->assertEquals('/buzz/bar/foo', $route->getAlias());
-        $this->assertEquals(['controller' => 'buzz', 'action' => 'bar', 'userParams' => ['foo']],
+        $this->assertEquals(['controller' => 'buzz', 'action' => 'bar', 'userParams' => ['foo'], 'requestParams' => []],
             $route->getParameters());
     }
 

@@ -6,6 +6,7 @@ abstract class Request implements IRequest
 {
     private $url;
     private $method;
+    private $attr = [];
 
 
     public function getRequestMethod(): string
@@ -32,5 +33,15 @@ abstract class Request implements IRequest
     public function setRequestMethod(string $method)
     {
         $this->method = $method;
+    }
+
+    public function getRequestParams(): array
+    {
+        return $this->attr;
+    }
+
+    public function addRequestParam(string $key, $value)
+    {
+        $this->attr[$key] = $value;
     }
 }

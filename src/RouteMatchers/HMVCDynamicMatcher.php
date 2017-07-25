@@ -26,6 +26,7 @@ class HMVCDynamicMatcher extends MVCDynamicMatcher
             $out['action'] = array_shift($path);
 
             $out['userParams'] = $this->extractParamsValues($route);
+            $out['requestParams'] = $request->getRequestParams();
 
             $route->addParameters($out);
 

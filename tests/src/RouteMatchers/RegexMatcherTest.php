@@ -21,7 +21,7 @@ class RegexMatcherTest extends FitTest
         $route->getUrl()->willReturn('/foo/bar/:id/buzz/:name');
         $route->addParameters(Argument::type('array'))
             ->will(function ($args) use (&$newParams) {
-                $newParams = $args[0]['userParams'];
+                $newParams = $args[0];
             });
 
         $route2 = $this->prophesize(Route::class);
@@ -30,7 +30,7 @@ class RegexMatcherTest extends FitTest
         $route2->getUrl()->willReturn('/foo/bar/:id');
         $route2->addParameters(Argument::type('array'))
             ->will(function ($args) use (&$newParams) {
-                $newParams = $args[0]['userParams'];
+                $newParams = $args[0];
             });
 
         $route3 = $this->prophesize(Route::class);
@@ -39,7 +39,7 @@ class RegexMatcherTest extends FitTest
         $route3->getUrl()->willReturn('/save/:id');
         $route3->addParameters(Argument::type('array'))
             ->will(function ($args) use (&$newParams) {
-                $newParams = $args[0]['userParams'];
+                $newParams = $args[0];
             });
 
         $route3 = $this->prophesize(Route::class);
@@ -48,7 +48,7 @@ class RegexMatcherTest extends FitTest
         $route3->getUrl()->willReturn('/buzz/bar/foo');
         $route3->addParameters(Argument::type('array'))
             ->will(function ($args) use (&$newParams) {
-                $newParams = $args[0]['userParams'];
+                $newParams = $args[0];
             });
 
         $routesArray = [
@@ -68,13 +68,14 @@ class RegexMatcherTest extends FitTest
 
         $request->getRequestMethod()->willReturn('GET');
         $request->getRequsetUrl()->willReturn('/buzz/bar/foo');
+        $request->getRequestParams()->willReturn([]);
 
         $newParams = null;
 
         $matcher = new RegexMatcher();
         $matcher->match($this->getCollection($newParams), $request->reveal());
 
-        $this->assertEquals([], $newParams);
+        $this->assertEquals(['userParams' => [], 'requestParams' => []], $newParams);
     }
 
     public function testMatchParamNoValidation()
@@ -83,13 +84,14 @@ class RegexMatcherTest extends FitTest
 
         $request->getRequestMethod()->willReturn('GET');
         $request->getRequsetUrl()->willReturn('/foo/bar/xxx');
+        $request->getRequestParams()->willReturn([]);
 
         $newParams = null;
 
         $matcher = new RegexMatcher();
         $matcher->match($this->getCollection($newParams), $request->reveal());
 
-        $this->assertEquals(['xxx'], $newParams);
+        $this->assertEquals(['userParams' => ['xxx'], 'requestParams' => []], $newParams);
     }
 
     public function testMatchParamWithValidation()
@@ -98,13 +100,14 @@ class RegexMatcherTest extends FitTest
 
         $request->getRequestMethod()->willReturn('GET');
         $request->getRequsetUrl()->willReturn('/foo/bar/5/buzz/xxx');
+        $request->getRequestParams()->willReturn([]);
 
         $newParams = null;
 
         $matcher = new RegexMatcher();
         $matcher->match($this->getCollection($newParams), $request->reveal());
 
-        $this->assertEquals([5, 'xxx'], $newParams);
+        $this->assertEquals(['userParams' => [5, 'xxx'], 'requestParams' => []], $newParams);
     }
 
     /**
@@ -117,6 +120,7 @@ class RegexMatcherTest extends FitTest
 
         $request->getRequestMethod()->willReturn('GET');
         $request->getRequsetUrl()->willReturn('/foo/bar/5/buzz/5');
+        $request->getRequestParams()->willReturn([]);
 
         $newParams = null;
 
@@ -134,6 +138,7 @@ class RegexMatcherTest extends FitTest
 
         $request->getRequestMethod()->willReturn('PUT');
         $request->getRequsetUrl()->willReturn('/foo/bar/xxx');
+        $request->getRequestParams()->willReturn([]);
 
         $newParams = null;
 
