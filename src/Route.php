@@ -7,8 +7,6 @@ use Fig\Http\Message\RequestMethodInterface;
 
 class Route
 {
-    protected $pathParser;
-
     /**
      * Accepted HTTP methods for this route.
      * @var string[]

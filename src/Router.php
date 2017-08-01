@@ -22,7 +22,11 @@ class Router
     /** @var  IRouteMatcher */
     protected $routeMatcher;
 
+    /** @var IUrlGenerator */
     protected $urlGenerator;
+
+    /** @var  IRequest */
+    protected $request;
 
     protected $midlewares = [];
 
@@ -50,6 +54,7 @@ class Router
     public function match(IRequest $request)
     {
         try {
+            $this->request = $request;
             $request = $this->beforeMatchHundle($request);
             $route = $this->routeMatcher->match($this->routeCollection, $request);
             $route = $this->afterMatchHundle($route);
@@ -64,14 +69,14 @@ class Router
     {
         $hundler = $this->getMiddlewareHundler(IBeforeMatchMiddleware::class);
 
-        return $hundler->hundle(null, $request);
+        return $hundler->hundle($this, $request);
     }
 
     protected function afterMatchHundle($route)
     {
         $hundler = $this->getMiddlewareHundler(IAfterMatchMiddleware::class);
 
-        return $hundler->hundle(null, $route);
+        return $hundler->hundle($this, $route);
     }
 
     protected function getMiddlewareHundler($type)
