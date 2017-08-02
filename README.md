@@ -13,7 +13,18 @@ composer require fitdev-pro/router
 Base usage
 ```php
 <?php
+use FitdevPro\FitRouter\Router;
+use FitdevPro\FitRouter\Request\HttpRequest;
+use FitdevPro\FitRouter\RouteCollection\RouteCollection;
+use FitdevPro\FitRouter\UrlGenerator\BaseGenerator;
+use FitdevPro\FitRouter\RouteMatchers\MVCDynamicMatcher;
 
+$routerRequest = new HttpRequest();
+$routerRequest->addRequestParam('extra', 'FooBar');
+
+$router = new Router(new RouteCollection(), new MVCDynamicMatcher(), new BaseGenerator());
+
+$route = $router->match( $routerRequest );
 ```
 
 ## Contribute

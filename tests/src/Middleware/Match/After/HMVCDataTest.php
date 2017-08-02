@@ -31,7 +31,15 @@ class HMVCDataTest extends FitTest
 
         $middleware([], $routeMock->reveal(), $this->getEndCallback());
 
-        $this->assertEquals(['module' => 'index', 'controller' => 'foo', 'action' => 'bar', 'params' => []],
+        $this->assertEquals([
+            'userParams' => [],
+            'requestParams' => [
+                'module' => 'index',
+                'controller' => 'foo',
+                'action' => 'bar',
+                'params' => []
+            ]
+        ],
             $newParams);
     }
 
@@ -51,10 +59,16 @@ class HMVCDataTest extends FitTest
         $middleware([], $routeMock->reveal(), $this->getEndCallback());
 
         $this->assertEquals([
-            'module' => 'index',
-            'controller' => 'foo',
-            'action' => 'bar',
-            'params' => ['id' => 13, 'name' => 'xxx']
+            'userParams' => [
+                13,
+                'xxx'
+            ],
+            'requestParams' => [
+                'module' => 'index',
+                'controller' => 'foo',
+                'action' => 'bar',
+                'params' => ['id' => 13, 'name' => 'xxx']
+            ]
         ],
             $newParams);
     }

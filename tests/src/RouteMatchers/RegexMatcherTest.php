@@ -75,7 +75,7 @@ class RegexMatcherTest extends FitTest
         $matcher = new RegexMatcher();
         $matcher->match($this->getCollection($newParams), $request->reveal());
 
-        $this->assertEquals(['userParams' => [], 'requestParams' => []], $newParams);
+        $this->assertEquals(['requestParams' => ['userParams' => []]], $newParams);
     }
 
     public function testMatchParamNoValidation()
@@ -91,7 +91,7 @@ class RegexMatcherTest extends FitTest
         $matcher = new RegexMatcher();
         $matcher->match($this->getCollection($newParams), $request->reveal());
 
-        $this->assertEquals(['userParams' => ['xxx'], 'requestParams' => []], $newParams);
+        $this->assertEquals(['requestParams' => ['userParams' => ['xxx']]], $newParams);
     }
 
     public function testMatchParamWithValidation()
@@ -107,7 +107,7 @@ class RegexMatcherTest extends FitTest
         $matcher = new RegexMatcher();
         $matcher->match($this->getCollection($newParams), $request->reveal());
 
-        $this->assertEquals(['userParams' => [5, 'xxx'], 'requestParams' => []], $newParams);
+        $this->assertEquals(['requestParams' => ['userParams' => [5, 'xxx']]], $newParams);
     }
 
     /**

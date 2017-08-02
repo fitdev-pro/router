@@ -31,7 +31,15 @@ class MVCDataTest extends FitTest
 
         $middleware([], $routeMock->reveal(), $this->getEndCallback());
 
-        $this->assertEquals(['controller' => 'foo', 'action' => 'bar', 'params' => []], $newParams);
+        $this->assertEquals([
+            'userParams' => [],
+            'requestParams' => [
+                'controller' => 'foo',
+                'action' => 'bar',
+                'params' => []
+            ]
+        ],
+            $newParams);
     }
 
     public function testFillWithParams()
@@ -49,7 +57,17 @@ class MVCDataTest extends FitTest
 
         $middleware([], $routeMock->reveal(), $this->getEndCallback());
 
-        $this->assertEquals(['controller' => 'foo', 'action' => 'bar', 'params' => ['id' => 13, 'name' => 'xxx']],
+        $this->assertEquals([
+            'userParams' => [
+                13,
+                'xxx'
+            ],
+            'requestParams' => [
+                'controller' => 'foo',
+                'action' => 'bar',
+                'params' => ['id' => 13, 'name' => 'xxx']
+            ]
+        ],
             $newParams);
     }
 

@@ -43,7 +43,10 @@ class RegexMatcher implements IRouteMatcher
 
         array_shift($matches);
 
-        $route->addParameters(['userParams' => $matches, 'requestParams' => $request->getRequestParams()]);
+        $requestParams = $request->getRequestParams();
+        $requestParams['userParams'] = $matches;
+
+        $route->addParameters(['requestParams' => $requestParams]);
     }
 
     private function getUrlWithRegex(Route $route)

@@ -104,6 +104,14 @@ class Route
         return $this->parameters;
     }
 
+    public function getParameter(string $key, $default = null)
+    {
+        if (isset($this->parameters[$key])) {
+            return $this->parameters[$key];
+        }
+        return $default;
+    }
+
     private function setParams(array $config)
     {
         if (isset($config['parameters'])) {

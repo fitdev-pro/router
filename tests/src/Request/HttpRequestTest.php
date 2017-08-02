@@ -56,4 +56,15 @@ class HttpRequestTest extends FitTest
 
         $this->assertEquals('mywebside.com', $request->getRequsetUrl());
     }
+
+    public function testGetRequsetParams()
+    {
+        $request = new HttpRequest();
+        $request->addRequestParam('test', 1);
+
+        $this->assertEquals(['test' => 1], $request->getRequestParams());
+        $this->assertEquals(1, $request->getRequestParam('test'));
+        $this->assertNull($request->getRequestParam('testNull'));
+        $this->assertFalse($request->getRequestParam('testNull', false));
+    }
 }

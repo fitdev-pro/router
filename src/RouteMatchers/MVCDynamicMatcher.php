@@ -23,11 +23,10 @@ class MVCDynamicMatcher implements IRouteMatcher
         try {
             $path = $this->extractUrlInfo($route);
 
-            $out['controller'] = array_shift($path);
-            $out['action'] = array_shift($path);
-
-            $out['userParams'] = $this->extractParamsValues($route);
             $out['requestParams'] = $request->getRequestParams();
+            $out['requestParams']['controller'] = array_shift($path);
+            $out['requestParams']['action'] = array_shift($path);
+            $out['requestParams']['userParams'] = $this->extractParamsValues($route);
 
             $route->addParameters($out);
 

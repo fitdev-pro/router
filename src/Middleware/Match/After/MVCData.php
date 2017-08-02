@@ -20,16 +20,14 @@ class MVCData implements IAfterMatchMiddleware
     public function __invoke($data, Route $route, callable $next)
     {
         try {
-            $out = [];
-
             $path = $this->extractControllerInfo($route);
 
-            $out['controller'] = array_shift($path);
-            $out['action'] = array_shift($path);
+            $params = $route->getParameters();
+            $params['requestParams']['controller'] = array_shift($path);
+            $params['requestParams']['action'] = array_shift($path);
+            $params['requestParams']['params'] = $this->extractParamsValues($route);
 
-            $out['params'] = $this->extractParamsValues($route);
-
-            $route->addParameters($out);
+            $route->addParameters($params);
         } catch (InvalidArgumentException $e) {
             throw new MiddlewareException($e->getMessage(), static::INVALID_CONTROLLER);
         }

@@ -94,6 +94,9 @@ class RouteTest extends FitTest
         $route->addParameters(['test2' => 'foo']);
 
         $this->assertEquals(['test' => true, 'test2' => 'foo'], $route->getParameters());
+        $this->assertTrue($route->getParameter('test'));
+        $this->assertNull($route->getParameter('testNull'));
+        $this->assertFalse($route->getParameter('testNull', false));
     }
 
     public function testRouteWithValidation()

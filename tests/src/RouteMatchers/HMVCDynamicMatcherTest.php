@@ -25,11 +25,12 @@ class HMVCDynamicMatcherTest extends FitTest
         $this->assertEquals('/buzz/bar/foo/1', $route->getController());
         $this->assertEquals('/buzz/bar/foo/1', $route->getAlias());
         $this->assertEquals([
-            'controller' => 'bar',
-            'action' => 'foo',
-            'module' => 'buzz',
-            'userParams' => [1],
-            'requestParams' => []
+            'requestParams' => [
+                'controller' => 'bar',
+                'action' => 'foo',
+                'module' => 'buzz',
+                'userParams' => [1],
+            ],
         ],
             $route->getParameters());
     }
