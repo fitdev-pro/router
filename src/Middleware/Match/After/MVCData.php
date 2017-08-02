@@ -25,7 +25,7 @@ class MVCData implements IAfterMatchMiddleware
             $params = $route->getParameters();
             $params['requestParams']['controller'] = array_shift($path);
             $params['requestParams']['action'] = array_shift($path);
-            $params['requestParams']['params'] = $this->extractParamsValues($route);
+            $params['requestParams']['actionParams'] = $this->extractParamsValues($route);
 
             $route->addParameters($params);
         } catch (InvalidArgumentException $e) {
@@ -42,12 +42,12 @@ class MVCData implements IAfterMatchMiddleware
         $paramsOut = array();
         $params = $route->getParameters();
 
-        if (!isset($params['userParams'])) {
+        if (!isset($params['requestParams']['userParams'])) {
             throw new MiddlewareException('Undefinded userParams. Add passed params to route using method addParams() on kay "userParams". ',
                 static::NO_USER_PARAMS);
         }
 
-        $userParams = $params['userParams'];
+        $userParams = $params['requestParams']['userParams'];
 
         if (preg_match_all('/:([\w-]+)/', $route->getUrl(), $urlParams)) {
             // grab array with matches

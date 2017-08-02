@@ -25,7 +25,7 @@ class HMVCData extends MVCData
             $params['requestParams']['module'] = array_shift($path);
             $params['requestParams']['controller'] = array_shift($path);
             $params['requestParams']['action'] = array_shift($path);
-            $params['requestParams']['params'] = $this->extractParamsValues($route);
+            $params['requestParams']['actionParams'] = $this->extractParamsValues($route);
 
             $route->addParameters($params);
         } catch (InvalidArgumentException $e) {

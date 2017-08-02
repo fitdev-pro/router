@@ -22,7 +22,7 @@ class MVCDataTest extends FitTest
 
         $routeMock = $this->prophesize(Route::class);
         $routeMock->getController()->willReturn('foo/bar');
-        $routeMock->getParameters()->willReturn(['userParams' => []]);
+        $routeMock->getParameters()->willReturn(['requestParams' => ['userParams' => []]]);
         $routeMock->getUrl()->willReturn('cos/');
         $routeMock->addParameters(Argument::type('array'))
             ->will(function ($args) use (&$newParams) {
@@ -32,11 +32,11 @@ class MVCDataTest extends FitTest
         $middleware([], $routeMock->reveal(), $this->getEndCallback());
 
         $this->assertEquals([
-            'userParams' => [],
             'requestParams' => [
                 'controller' => 'foo',
                 'action' => 'bar',
-                'params' => []
+                'userParams' => [],
+                'actionParams' => []
             ]
         ],
             $newParams);
@@ -48,7 +48,7 @@ class MVCDataTest extends FitTest
 
         $routeMock = $this->prophesize(Route::class);
         $routeMock->getController()->willReturn('foo/bar');
-        $routeMock->getParameters()->willReturn(['userParams' => ['13', 'xxx']]);
+        $routeMock->getParameters()->willReturn(['requestParams' => ['userParams' => ['13', 'xxx']]]);
         $routeMock->getUrl()->willReturn('/cos/:id/:name');
         $routeMock->addParameters(Argument::type('array'))
             ->will(function ($args) use (&$newParams) {
@@ -58,14 +58,11 @@ class MVCDataTest extends FitTest
         $middleware([], $routeMock->reveal(), $this->getEndCallback());
 
         $this->assertEquals([
-            'userParams' => [
-                13,
-                'xxx'
-            ],
             'requestParams' => [
                 'controller' => 'foo',
                 'action' => 'bar',
-                'params' => ['id' => 13, 'name' => 'xxx']
+                'actionParams' => ['id' => 13, 'name' => 'xxx'],
+                'userParams' => [13, 'xxx'],
             ]
         ],
             $newParams);
@@ -81,7 +78,7 @@ class MVCDataTest extends FitTest
 
         $routeMock = $this->prophesize(Route::class);
         $routeMock->getController()->willReturn('foo/bar');
-        $routeMock->getParameters()->willReturn(['userParams' => ['13']]);
+        $routeMock->getParameters()->willReturn(['requestParams' => ['userParams' => ['13']]]);
         $routeMock->getUrl()->willReturn('/cos/:id/:name');
         $routeMock->addParameters(Argument::type('array'))
             ->will(function ($args) use (&$newParams) {
