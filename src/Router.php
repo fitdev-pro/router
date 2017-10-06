@@ -60,7 +60,7 @@ class Router
 
     public function appendAfterMiddleware(IAfterMatchMiddleware $middleware)
     {
-        $this->midlewaresBefore[] = $middleware;
+        $this->midlewaresAfter[] = $middleware;
     }
 
     public function match(IRequest $request)
