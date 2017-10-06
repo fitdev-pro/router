@@ -6,7 +6,6 @@ use FitdevPro\FitMiddleware\MiddlewareHundler;
 use FitdevPro\FitMiddleware\Queue;
 use FitdevPro\FitMiddleware\Resolver;
 use FitdevPro\FitRouter\Exception\RouterException;
-use FitdevPro\FitRouter\Middleware\IRouterMiddleware;
 use FitdevPro\FitRouter\Middleware\Match\IAfterMatchMiddleware;
 use FitdevPro\FitRouter\Middleware\Match\IBeforeMatchMiddleware;
 use FitdevPro\FitRouter\Request\IRequest;
@@ -25,10 +24,8 @@ class Router
     /** @var IUrlGenerator */
     protected $urlGenerator;
 
-    /** @var  IRequest */
-    protected $request;
-
-    protected $midlewares = [];
+    protected $midlewaresBefore = [];
+    protected $midlewaresAfter = [];
 
     /**
      * Router constructor.
@@ -46,15 +43,29 @@ class Router
         $this->urlGenerator = $urlGenerator;
     }
 
-    public function appendMiddleware(IRouterMiddleware $middleware)
+    public function addRoute(Route $route)
     {
-        $this->midlewares[] = $middleware;
+        $this->routeCollection->add($route);
+    }
+
+    public function loadRoutes(array $routes)
+    {
+        $this->routeCollection->load($routes);
+    }
+
+    public function appendBeforeMiddleware(IBeforeMatchMiddleware $middleware)
+    {
+        $this->midlewaresBefore[] = $middleware;
+    }
+
+    public function appendAfterMiddleware(IAfterMatchMiddleware $middleware)
+    {
+        $this->midlewaresBefore[] = $middleware;
     }
 
     public function match(IRequest $request)
     {
         try {
-            $this->request = $request;
             $request = $this->beforeMatchHundle($request);
             $route = $this->routeMatcher->match($this->routeCollection, $request);
             $route = $this->afterMatchHundle($route);
@@ -67,44 +78,29 @@ class Router
 
     protected function beforeMatchHundle($request)
     {
-        $hundler = $this->getMiddlewareHundler(IBeforeMatchMiddleware::class);
+        $hundler = new MiddlewareHundler(new Resolver(), new Queue());
+
+        foreach ($this->midlewaresBefore as $midleware) {
+            $hundler->append($midleware);
+        }
 
         return $hundler->hundle($this, $request);
     }
 
     protected function afterMatchHundle($route)
     {
-        $hundler = $this->getMiddlewareHundler(IAfterMatchMiddleware::class);
-
-        return $hundler->hundle($this, $route);
-    }
-
-    protected function getMiddlewareHundler($type)
-    {
         $hundler = new MiddlewareHundler(new Resolver(), new Queue());
 
-        foreach ($this->midlewares as $midleware) {
-            if ($midleware instanceof $type) {
-                $hundler->append($midleware);
-            }
+        foreach ($this->midlewaresAfter as $midleware) {
+            $hundler->append($midleware);
         }
 
-        return $hundler;
+        return $hundler->hundle($this, $route);
     }
 
     public function getUrlGenerate(): IUrlGenerator
     {
         $this->urlGenerator->setRouteCollection($this->routeCollection);
         return $this->urlGenerator;
-    }
-
-    public function addRoute(Route $route)
-    {
-        $this->routeCollection->add($route);
-    }
-
-    public function loadRoutes(array $routes)
-    {
-        $this->routeCollection->load($routes);
     }
 }

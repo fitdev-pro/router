@@ -19,32 +19,43 @@ class HMVCDynamicDefaultsTest extends FitTest
     {
         $request = $this->prophesize(IRequest::class);
         $request->getRequsetUrl()->willReturn('');
-        $request->setRequsetUrl('/index/index/index')->shouldBeCalled();
+        $request->getRequestMethod()->willReturn('POST');
+        $request->getRequestParams()->willReturn(['foo'=>'bar']);
 
         $midleware = new HMVCDynamicDefaults('index', 'index', 'index');
 
-        $midleware([], $request->reveal(), $this->getEndCallback());
+        $request = $midleware([], $request->reveal(), $this->getEndCallback());
+
+        $this->assertEquals('/index/index/index', $request->getRequsetUrl());
+        $this->assertEquals('POST', $request->getRequestMethod());
+        $this->assertEquals(['foo'=>'bar'], $request->getRequestParams());
     }
 
     public function testMiddlewareNoAction()
     {
         $request = $this->prophesize(IRequest::class);
-        $request->getRequsetUrl()->willReturn('test');
-        $request->setRequsetUrl('/test/index/index')->shouldBeCalled();
+        $request->getRequsetUrl()->willReturn('/test');
+        $request->getRequestMethod()->shouldBeCalled();
+        $request->getRequestParams()->shouldBeCalled();
 
         $midleware = new HMVCDynamicDefaults('index', 'index', 'index');
 
-        $midleware([], $request->reveal(), $this->getEndCallback());
+        $request = $midleware([], $request->reveal(), $this->getEndCallback());
+
+        $this->assertEquals('/test/index/index', $request->getRequsetUrl());
     }
 
     public function testMiddlewareNoControllerAndAction()
     {
         $request = $this->prophesize(IRequest::class);
-        $request->getRequsetUrl()->willReturn('test/foo');
-        $request->setRequsetUrl('/test/foo/index')->shouldBeCalled();
+        $request->getRequsetUrl()->willReturn('/test/foo/');
+        $request->getRequestMethod()->shouldBeCalled();
+        $request->getRequestParams()->shouldBeCalled();
 
         $midleware = new HMVCDynamicDefaults('index', 'index', 'index');
 
-        $midleware([], $request->reveal(), $this->getEndCallback());
+        $request = $midleware([], $request->reveal(), $this->getEndCallback());
+
+        $this->assertEquals('/test/foo/index', $request->getRequsetUrl());
     }
 }

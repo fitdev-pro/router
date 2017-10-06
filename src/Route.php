@@ -75,7 +75,7 @@ class Route
     private function setAlias(array $config)
     {
         if (isset($config['alias'])) {
-            Assertion::string($config['alias']);
+            Assertion::string($config['alias'], 'Route config value "alias" expected to be string, type %s given.');
 
             $this->alias = $config['alias'];
         }
@@ -93,7 +93,7 @@ class Route
                 $config['methods'] = [$config['methods']];
             }
 
-            Assertion::isArray($config['methods']);
+            Assertion::isArray($config['methods'], 'Route config value "methods" expected to be array.');
 
             $this->methods = $config['methods'];
         }
@@ -115,7 +115,7 @@ class Route
     private function setParams(array $config)
     {
         if (isset($config['parameters'])) {
-            Assertion::isArray($config['parameters']);
+            Assertion::isArray($config['parameters'], 'Route config value "parameters" expected to be array.');
 
             $this->parameters = $config['parameters'];
         }
@@ -134,7 +134,7 @@ class Route
     private function setParamValidation(array $config)
     {
         if (isset($config['param-validation'])) {
-            Assertion::isArray($config['param-validation']);
+            Assertion::isArray($config['param-validation'], 'Route config value "param-validation" expected to be array.');
 
             $this->validation = $config['param-validation'];
         }

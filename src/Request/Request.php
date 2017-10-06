@@ -4,9 +4,9 @@ namespace FitdevPro\FitRouter\Request;
 
 abstract class Request implements IRequest
 {
-    private $url;
-    private $method;
-    private $param = [];
+    protected $url;
+    protected $method;
+    protected $param = [];
 
 
     public function getRequestMethod(): string
@@ -17,22 +17,6 @@ abstract class Request implements IRequest
     public function getRequsetUrl(): string
     {
         return $this->url;
-    }
-
-    /**
-     * @param string $url
-     */
-    public function setRequsetUrl(string $url)
-    {
-        $this->url = $url;
-    }
-
-    /**
-     * @param string $method
-     */
-    public function setRequestMethod(string $method)
-    {
-        $this->method = $method;
     }
 
     public function getRequestParams(): array

@@ -11,8 +11,8 @@ class HttpRequest extends Request
      */
     public function __construct()
     {
-        $this->setRequsetUrl($this->getUrl());
-        $this->setRequestMethod($this->getMethod());
+        $this->url = $this->getUrl();
+        $this->method = $this->getMethod();
     }
 
     private function getMethod(): string

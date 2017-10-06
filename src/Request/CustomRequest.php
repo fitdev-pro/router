@@ -11,7 +11,7 @@ class CustomRequest extends Request
      */
     public function __construct(string $url, string $method)
     {
-        $this->setRequsetUrl($url);
-        $this->setRequestMethod($method);
+        $this->url = $url;
+        $this->method = $method;
     }
 }

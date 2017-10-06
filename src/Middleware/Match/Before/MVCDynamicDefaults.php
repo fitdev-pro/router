@@ -3,6 +3,7 @@
 namespace FitdevPro\FitRouter\Middleware\Match\Before;
 
 use FitdevPro\FitRouter\Middleware\Match\IBeforeMatchMiddleware;
+use FitdevPro\FitRouter\Request\CustomRequest;
 use FitdevPro\FitRouter\Request\IRequest;
 
 class MVCDynamicDefaults implements IBeforeMatchMiddleware
@@ -33,9 +34,13 @@ class MVCDynamicDefaults implements IBeforeMatchMiddleware
             $elements[1] = $this->action;
         }
 
-        $request->setRequsetUrl('/' . trim(join('/', $elements), '/'));
+        $new_request = new CustomRequest('/' . trim(join('/', $elements), '/'), $request->getRequestMethod());
 
-        $request = $next($data, $request);
+        foreach( $request->getRequestParams() as $key => $value){
+            $new_request->addRequestParam($key, $value);
+        }
+
+        $request = $next($data, $new_request);
 
         return $request;
     }

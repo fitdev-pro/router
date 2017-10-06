@@ -43,7 +43,7 @@ class UrlGeneratorWithMiddlewareTest extends FitTest
 
         $generator = new UrlGeneratorWithMiddleware();
         $generator->setRouteCollection($collection->reveal());
-        $generator->appendMiddleware($middleware->reveal());
+        $generator->appendBeforeMiddleware($middleware->reveal());
 
         $url = $generator->generate('/test/index/index', ['lang' => 'pl']);
 
@@ -64,7 +64,7 @@ class UrlGeneratorWithMiddlewareTest extends FitTest
 
         $generator = new UrlGeneratorWithMiddleware();
         $generator->setRouteCollection($collection->reveal());
-        $generator->appendMiddleware($middleware->reveal());
+        $generator->appendAfterMiddleware($middleware->reveal());
 
         $url = $generator->generate('/test/index/index', ['lang' => 'pl']);
 
@@ -89,8 +89,8 @@ class UrlGeneratorWithMiddlewareTest extends FitTest
 
         $generator = new UrlGeneratorWithMiddleware();
         $generator->setRouteCollection($collection->reveal());
-        $generator->appendMiddleware($middlewareBefore->reveal());
-        $generator->appendMiddleware($middlewareAfter->reveal());
+        $generator->appendBeforeMiddleware($middlewareBefore->reveal());
+        $generator->appendAfterMiddleware($middlewareAfter->reveal());
 
         $url = $generator->generate('/test/index/index', ['lang' => 'en']);
 

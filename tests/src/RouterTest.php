@@ -23,6 +23,7 @@ class RouterTest extends FitTest
         $matcher = $this->prophesize(IRouteMatcher::class);
         $request = $this->prophesize(IRequest::class);
 
+        /** @var Route $route */
         $route = $this->prophesize(Route::class);
         $route->getAlias()->willReturn('test_route');
 
@@ -58,17 +59,16 @@ class RouterTest extends FitTest
         $before = $this->prophesize(IBeforeMatchMiddleware::class);
         $after = $this->prophesize(IAfterMatchMiddleware::class);
 
-        $route = $this->prophesize(Route::class);
+        $route = $this->prophesize(Route::class)->reveal();
 
-        $before->__invoke(Argument::type(Router::class), $request,
-            Argument::any())->shouldBeCalled()->willReturn($request);
+        $before->__invoke(Argument::type(Router::class), $request, Argument::any())->shouldBeCalled()->willReturn($request);
         $after->__invoke(Argument::type(Router::class), $route, Argument::any())->shouldBeCalled()->willReturn($route);
 
-        $matcher->match($colection, $request)->willReturn($route->reveal());
+        $matcher->match($colection, $request)->willReturn($route);
 
         $router = new Router($colection->reveal(), $matcher->reveal(), $generator->reveal());
-        $router->appendMiddleware($after->reveal());
-        $router->appendMiddleware($before->reveal());
+        $router->appendAfterMiddleware($after->reveal());
+        $router->appendBeforeMiddleware($before->reveal());
 
         $router->match($request->reveal());
     }

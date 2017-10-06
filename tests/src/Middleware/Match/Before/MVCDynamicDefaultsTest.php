@@ -19,21 +19,29 @@ class MVCDynamicDefaultsTest extends FitTest
     {
         $request = $this->prophesize(IRequest::class);
         $request->getRequsetUrl()->willReturn('');
-        $request->setRequsetUrl('/index/index')->shouldBeCalled();
+        $request->getRequestMethod()->willReturn('POST');
+        $request->getRequestParams()->willReturn(['foo'=>'bar']);
 
         $midleware = new MVCDynamicDefaults('index', 'index');
 
-        $midleware([], $request->reveal(), $this->getEndCallback());
+        $request = $midleware([], $request->reveal(), $this->getEndCallback());
+
+        $this->assertEquals('/index/index', $request->getRequsetUrl());
+        $this->assertEquals('POST', $request->getRequestMethod());
+        $this->assertEquals(['foo'=>'bar'], $request->getRequestParams());
     }
 
     public function testMiddlewareNoAction()
     {
         $request = $this->prophesize(IRequest::class);
         $request->getRequsetUrl()->willReturn('test');
-        $request->setRequsetUrl('/test/index')->shouldBeCalled();
+        $request->getRequestMethod()->shouldBeCalled();
+        $request->getRequestParams()->shouldBeCalled();
 
         $midleware = new MVCDynamicDefaults('index', 'index');
 
-        $midleware([], $request->reveal(), $this->getEndCallback());
+        $request = $midleware([], $request->reveal(), $this->getEndCallback());
+
+        $this->assertEquals('/test/index', $request->getRequsetUrl());
     }
 }
