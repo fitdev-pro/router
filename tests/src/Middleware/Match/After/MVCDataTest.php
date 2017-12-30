@@ -9,13 +9,6 @@ use Prophecy\Argument;
 
 class MVCDataTest extends FitTest
 {
-    private function getEndCallback()
-    {
-        return function ($data, $output) {
-            return $output;
-        };
-    }
-
     public function testFill()
     {
         $middleware = new MVCData();
@@ -40,6 +33,13 @@ class MVCDataTest extends FitTest
             ]
         ],
             $newParams);
+    }
+
+    private function getEndCallback()
+    {
+        return function ($data, $output) {
+            return $output;
+        };
     }
 
     public function testFillWithParams()
@@ -70,7 +70,6 @@ class MVCDataTest extends FitTest
 
     /**
      * @expectedException \FitdevPro\FitRouter\Exception\MiddlewareException
-     * @expectedExceptionCode 1815130601
      */
     public function testFillWithTooFewParams()
     {
@@ -90,7 +89,6 @@ class MVCDataTest extends FitTest
 
     /**
      * @expectedException \FitdevPro\FitRouter\Exception\MiddlewareException
-     * @expectedExceptionCode 1815130602
      */
     public function testFillWithNoParams()
     {
@@ -110,7 +108,6 @@ class MVCDataTest extends FitTest
 
     /**
      * @expectedException \FitdevPro\FitRouter\Exception\MiddlewareException
-     * @expectedExceptionCode 1815130603
      */
     public function testFillWithBadController()
     {

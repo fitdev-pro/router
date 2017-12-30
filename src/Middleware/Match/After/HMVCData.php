@@ -8,11 +8,6 @@ use FitdevPro\FitRouter\Route;
 
 class HMVCData extends MVCData
 {
-    const
-        TOO_FEW_PARAMS = '1815080601',
-        NO_USER_PARAMS = '1815080602',
-        INVALID_CONTROLLER = '1815080603';
-
     protected $segments = 3;
 
 
@@ -29,7 +24,7 @@ class HMVCData extends MVCData
 
             $route->addParameters($params);
         } catch (InvalidArgumentException $e) {
-            throw new MiddlewareException($e->getMessage(), static::INVALID_CONTROLLER);
+            throw new MiddlewareException($e->getMessage(), 0, $e);
         }
 
         $route = $next($data, $route);

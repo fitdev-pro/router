@@ -14,11 +14,33 @@ class CustomRequestTest extends FitTest
         $this->assertEquals('POST', $request->getRequestMethod());
     }
 
+    public function testSetRequestMethod()
+    {
+        $request = new CustomRequest('', 'POST');
+
+        $this->assertEquals('POST', $request->getRequestMethod());
+
+        $request->setRequestMethod('PUT');
+
+        $this->assertEquals('PUT', $request->getRequestMethod());
+    }
+
     public function testGetRequsetUrl()
     {
         $request = new CustomRequest('mywebside.com', '');
 
         $this->assertEquals('mywebside.com', $request->getRequsetUrl());
+    }
+
+    public function testSetRequsetUrl()
+    {
+        $request = new CustomRequest('mywebside.com', '');
+
+        $this->assertEquals('mywebside.com', $request->getRequsetUrl());
+
+        $request->setRequestUrl('mywebside2.com');
+
+        $this->assertEquals('mywebside2.com', $request->getRequsetUrl());
     }
 
     public function testGetRequsetParams()

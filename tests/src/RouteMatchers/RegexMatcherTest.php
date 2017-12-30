@@ -11,6 +11,22 @@ use Prophecy\Argument;
 
 class RegexMatcherTest extends FitTest
 {
+    public function testMatch()
+    {
+        $request = $this->prophesize(IRequest::class);
+
+        $request->getRequestMethod()->willReturn('GET');
+        $request->getRequsetUrl()->willReturn('/buzz/bar/foo');
+        $request->getRequestParams()->willReturn([]);
+
+        $newParams = null;
+
+        $matcher = new RegexMatcher();
+        $matcher->match($this->getCollection($newParams), $request->reveal());
+
+        $this->assertEquals(['requestParams' => ['userParams' => []]], $newParams);
+    }
+
     private function getCollection(&$newParams)
     {
         $collection = $this->prophesize(IRouteCollection::class);
@@ -62,22 +78,6 @@ class RegexMatcherTest extends FitTest
         return $collection->reveal();
     }
 
-    public function testMatch()
-    {
-        $request = $this->prophesize(IRequest::class);
-
-        $request->getRequestMethod()->willReturn('GET');
-        $request->getRequsetUrl()->willReturn('/buzz/bar/foo');
-        $request->getRequestParams()->willReturn([]);
-
-        $newParams = null;
-
-        $matcher = new RegexMatcher();
-        $matcher->match($this->getCollection($newParams), $request->reveal());
-
-        $this->assertEquals(['requestParams' => ['userParams' => []]], $newParams);
-    }
-
     public function testMatchParamNoValidation()
     {
         $request = $this->prophesize(IRequest::class);
@@ -111,8 +111,7 @@ class RegexMatcherTest extends FitTest
     }
 
     /**
-     * @expectedException \FitdevPro\FitRouter\Exception\MatcherException
-     * @expectedExceptionCode 1815181301
+     * @expectedException \FitdevPro\FitRouter\Exception\NotFoundException
      */
     public function testMatchBadParam()
     {
@@ -129,8 +128,7 @@ class RegexMatcherTest extends FitTest
     }
 
     /**
-     * @expectedException \FitdevPro\FitRouter\Exception\MatcherException
-     * @expectedExceptionCode 1815181301
+     * @expectedException \FitdevPro\FitRouter\Exception\MethodNotAllowedException
      */
     public function testMatchBadMethod()
     {

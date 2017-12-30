@@ -7,5 +7,5 @@ use FitdevPro\FitRouter\Route;
 
 interface IAfterMatchMiddleware extends IRouterMiddleware
 {
-    public function __invoke($data, Route $route, callable $next);
+    public function __invoke($router, Route $route, callable $next);
 }

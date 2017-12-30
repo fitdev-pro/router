@@ -36,7 +36,6 @@ class MVCDynamicMatcherTest extends FitTest
 
     /**
      * @expectedException \FitdevPro\FitRouter\Exception\MatcherException
-     * @expectedExceptionCode 1815130401
      */
     public function testBadMatch()
     {

@@ -11,8 +11,19 @@ class HttpRequest extends Request
      */
     public function __construct()
     {
-        $this->setRequsetUrl($this->getUrl());
-        $this->setRequestMethod($this->getMethod());
+        $this->url = $this->getUrl();
+        $this->method = $this->getMethod();
+    }
+
+    private function getUrl(): string
+    {
+        $requestUrl = $_SERVER['REQUEST_URI'];
+
+        if (($pos = strpos($requestUrl, '?')) !== false) {
+            $requestUrl = substr($requestUrl, 0, $pos);
+        }
+
+        return $requestUrl;
     }
 
     private function getMethod(): string
@@ -31,16 +42,5 @@ class HttpRequest extends Request
         }
 
         return $requestMethod;
-    }
-
-    private function getUrl(): string
-    {
-        $requestUrl = $_SERVER['REQUEST_URI'];
-
-        if (($pos = strpos($requestUrl, '?')) !== false) {
-            $requestUrl = substr($requestUrl, 0, $pos);
-        }
-
-        return $requestUrl;
     }
 }

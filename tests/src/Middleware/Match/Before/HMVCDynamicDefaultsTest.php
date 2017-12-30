@@ -8,6 +8,17 @@ use FitdevPro\FitRouter\TestsLib\FitTest;
 
 class HMVCDynamicDefaultsTest extends FitTest
 {
+    public function testMiddlewareEmptyUrl()
+    {
+        $request = $this->prophesize(IRequest::class);
+        $request->getRequsetUrl()->willReturn('');
+        $request->setRequestUrl('/index/index/index')->shouldBeCalled();
+
+        $midleware = new HMVCDynamicDefaults('index', 'index', 'index');
+
+        $midleware([], $request->reveal(), $this->getEndCallback());
+    }
+
     private function getEndCallback()
     {
         return function ($data, $output) {
@@ -15,22 +26,11 @@ class HMVCDynamicDefaultsTest extends FitTest
         };
     }
 
-    public function testMiddlewareEmptyUrl()
-    {
-        $request = $this->prophesize(IRequest::class);
-        $request->getRequsetUrl()->willReturn('');
-        $request->setRequsetUrl('/index/index/index')->shouldBeCalled();
-
-        $midleware = new HMVCDynamicDefaults('index', 'index', 'index');
-
-        $midleware([], $request->reveal(), $this->getEndCallback());
-    }
-
     public function testMiddlewareNoAction()
     {
         $request = $this->prophesize(IRequest::class);
         $request->getRequsetUrl()->willReturn('test');
-        $request->setRequsetUrl('/test/index/index')->shouldBeCalled();
+        $request->setRequestUrl('/test/index/index')->shouldBeCalled();
 
         $midleware = new HMVCDynamicDefaults('index', 'index', 'index');
 
@@ -41,7 +41,7 @@ class HMVCDynamicDefaultsTest extends FitTest
     {
         $request = $this->prophesize(IRequest::class);
         $request->getRequsetUrl()->willReturn('test/foo');
-        $request->setRequsetUrl('/test/foo/index')->shouldBeCalled();
+        $request->setRequestUrl('/test/foo/index')->shouldBeCalled();
 
         $midleware = new HMVCDynamicDefaults('index', 'index', 'index');
 

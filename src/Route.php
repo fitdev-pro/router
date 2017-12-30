@@ -43,24 +43,60 @@ class Route
         $this->setParamValidation($config);
     }
 
-    public function getUrl(): string
-    {
-        return $this->url;
-    }
-
     private function setUrl(string $url)
     {
         $this->url = '/' . trim($url, '/');
     }
 
-    public function getController(): string
-    {
-        return $this->controller;
-    }
-
     private function setController($controller)
     {
         $this->controller = $controller;
+    }
+
+    private function setAlias(array $config)
+    {
+        if (isset($config['alias'])) {
+            Assertion::string($config['alias'], 'Route config value "alias" expected to be string, type %s given.');
+
+            $this->alias = $config['alias'];
+        }
+    }
+
+    private function setMethods(array $config)
+    {
+        if (isset($config['methods'])) {
+            if (is_string($config['methods'])) {
+                $config['methods'] = [$config['methods']];
+            }
+
+            Assertion::isArray($config['methods'], 'Route config value "methods" expected to be array.');
+
+            $this->methods = $config['methods'];
+        }
+    }
+
+    private function setParams(array $config)
+    {
+        if (isset($config['parameters'])) {
+            Assertion::isArray($config['parameters'], 'Route config value "parameters" expected to be array.');
+
+            $this->parameters = $config['parameters'];
+        }
+    }
+
+    private function setParamValidation(array $config)
+    {
+        if (isset($config['param-validation'])) {
+            Assertion::isArray($config['param-validation'],
+                'Route config value "param-validation" expected to be array.');
+
+            $this->validation = $config['param-validation'];
+        }
+    }
+
+    public function getUrl(): string
+    {
+        return $this->url;
     }
 
     public function getAlias(): string
@@ -72,31 +108,14 @@ class Route
         return $this->alias;
     }
 
-    private function setAlias(array $config)
+    public function getController(): string
     {
-        if (isset($config['alias'])) {
-            Assertion::string($config['alias']);
-
-            $this->alias = $config['alias'];
-        }
+        return $this->controller;
     }
 
     public function getMethods(): array
     {
         return $this->methods;
-    }
-
-    private function setMethods(array $config)
-    {
-        if (isset($config['methods'])) {
-            if (is_string($config['methods'])) {
-                $config['methods'] = [$config['methods']];
-            }
-
-            Assertion::isArray($config['methods']);
-
-            $this->methods = $config['methods'];
-        }
     }
 
     public function getParameters(): array
@@ -112,15 +131,6 @@ class Route
         return $default;
     }
 
-    private function setParams(array $config)
-    {
-        if (isset($config['parameters'])) {
-            Assertion::isArray($config['parameters']);
-
-            $this->parameters = $config['parameters'];
-        }
-    }
-
     public function addParameters(array $parameters)
     {
         $this->parameters = array_merge($this->parameters, $parameters);
@@ -129,15 +139,6 @@ class Route
     public function getParamValidation(): array
     {
         return $this->validation;
-    }
-
-    private function setParamValidation(array $config)
-    {
-        if (isset($config['param-validation'])) {
-            Assertion::isArray($config['param-validation']);
-
-            $this->validation = $config['param-validation'];
-        }
     }
 
 }

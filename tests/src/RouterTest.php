@@ -2,7 +2,6 @@
 
 namespace FitdevPro\FitRouter\Tests;
 
-use FitdevPro\FitRouter\Exception\MatcherException;
 use FitdevPro\FitRouter\Middleware\Match\IAfterMatchMiddleware;
 use FitdevPro\FitRouter\Middleware\Match\IBeforeMatchMiddleware;
 use FitdevPro\FitRouter\Request\IRequest;
@@ -34,21 +33,6 @@ class RouterTest extends FitTest
         $this->assertEquals('test_route', $routOut->getAlias());
     }
 
-    public function testRouterMatchNotFound()
-    {
-        $colection = $this->prophesize(IRouteCollection::class);
-        $generator = $this->prophesize(IUrlGenerator::class);
-        $matcher = $this->prophesize(IRouteMatcher::class);
-        $request = $this->prophesize(IRequest::class);
-
-        $matcher->match($colection, $request)->willThrow(new MatcherException('Rout not found.'));
-
-        $router = new Router($colection->reveal(), $matcher->reveal(), $generator->reveal());
-        $routOut = $router->match($request->reveal());
-
-        $this->assertNull($routOut);
-    }
-
     public function testRouterMiddlewar()
     {
         $colection = $this->prophesize(IRouteCollection::class);
@@ -67,8 +51,8 @@ class RouterTest extends FitTest
         $matcher->match($colection, $request)->willReturn($route->reveal());
 
         $router = new Router($colection->reveal(), $matcher->reveal(), $generator->reveal());
-        $router->appendMiddleware($after->reveal());
-        $router->appendMiddleware($before->reveal());
+        $router->appendAfterMiddleware($after->reveal());
+        $router->appendBeforeMiddleware($before->reveal());
 
         $router->match($request->reveal());
     }

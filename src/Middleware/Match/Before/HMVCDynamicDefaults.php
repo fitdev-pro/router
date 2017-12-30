@@ -23,7 +23,7 @@ class HMVCDynamicDefaults implements IBeforeMatchMiddleware
     }
 
 
-    public function __invoke($data, IRequest $request, callable $next)
+    public function __invoke($router, IRequest $request, callable $next)
     {
         $elements = explode('/', trim($request->getRequsetUrl(), '/'));
 
@@ -39,9 +39,9 @@ class HMVCDynamicDefaults implements IBeforeMatchMiddleware
             $elements[2] = $this->action;
         }
 
-        $request->setRequsetUrl('/' . trim(join('/', $elements), '/'));
+        $request->setRequestUrl('/' . trim(join('/', $elements), '/'));
 
-        $request = $next($data, $request);
+        $request = $next($router, $request);
 
         return $request;
     }

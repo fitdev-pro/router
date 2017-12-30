@@ -3,42 +3,44 @@
 namespace FitdevPro\FitRouter\RouteMatchers;
 
 use FitdevPro\FitRouter\Exception\MatcherException;
+use FitdevPro\FitRouter\Exception\MethodNotAllowedException;
+use FitdevPro\FitRouter\Exception\NotFoundException;
 use FitdevPro\FitRouter\Request\IRequest;
 use FitdevPro\FitRouter\Route;
 use FitdevPro\FitRouter\RouteCollection\IRouteCollection;
 
 class RegexMatcher implements IRouteMatcher
 {
-    const
-        ROUTE_NOT_FOUND = '1815181301',
-        METHOD_NOT_ALLOWD = '1815181302',
-        ROUTE_NOT_MATCH = '1815181303';
-
     public function match(IRouteCollection $routeCollection, IRequest $request): Route
     {
+        /** @var Route $matchedRoute */
+        $matchedRoute = null;
         foreach ($routeCollection->getAll() as $route) {
             try {
                 $this->checkRoute($route, $request);
-
-                return $route;
+                $matchedRoute = $route;
             } catch (MatcherException $e) {
                 continue;
             }
         }
 
-        throw new MatcherException('Rout not found.', self::ROUTE_NOT_FOUND);
+        if (is_null($matchedRoute)) {
+            throw new NotFoundException();
+        }
+
+        if (!in_array($request->getRequestMethod(), $matchedRoute->getMethods(), true)) {
+            throw new MethodNotAllowedException();
+        }
+
+        return $matchedRoute;
     }
 
     private function checkRoute(Route $route, IRequest $request)
     {
-        if (!in_array($request->getRequestMethod(), $route->getMethods(), true)) {
-            throw new MatcherException('Method not allowd.', self::METHOD_NOT_ALLOWD);
-        }
-
-        $pattern = '@^' . $this->getUrlWithRegex($route) . '/?$@i';
+        $pattern = $this->getUrlWithRegex($route);
 
         if (!preg_match($pattern, $request->getRequsetUrl(), $matches)) {
-            throw new MatcherException('Route not match.', self::ROUTE_NOT_MATCH);
+            throw new MatcherException('Route not match.');
         }
 
         array_shift($matches);
@@ -51,20 +53,20 @@ class RegexMatcher implements IRouteMatcher
 
     private function getUrlWithRegex(Route $route)
     {
-        return preg_replace_callback(
-            '/(:\w+)/',
-            function ($matches) use ($route) {
-                $regex = $route->getParamValidation();
+        $callback = function ($matches) use ($route) {
+            $regex = $route->getParamValidation();
 
-                $name = ltrim($matches[1], ':');
+            $name = ltrim($matches[1], ':');
 
-                if (isset($matches[1], $regex[$name])) {
-                    return $regex[$name];
-                }
+            if (isset($matches[1], $regex[$name])) {
+                return $regex[$name];
+            }
 
-                return '([\w-]+)';
-            },
-            $route->getUrl()
-        );
+            return '([\w-]+)';
+        };
+
+        $patern = preg_replace_callback('/(:\w+)/', $callback, $route->getUrl());
+
+        return '@^' . $patern . '/?$@i';
     }
 }

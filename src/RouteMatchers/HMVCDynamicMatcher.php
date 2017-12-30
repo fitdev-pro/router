@@ -10,9 +10,6 @@ use FitdevPro\FitRouter\RouteCollection\IRouteCollection;
 
 class HMVCDynamicMatcher extends MVCDynamicMatcher
 {
-    const
-        ROUTE_INVALID = '1815080401';
-
     protected $segments = 3;
 
     public function match(IRouteCollection $routeCollection, IRequest $request): Route
@@ -31,7 +28,7 @@ class HMVCDynamicMatcher extends MVCDynamicMatcher
 
             return $route;
         } catch (InvalidArgumentException $e) {
-            throw new MatcherException('Rout not found.', self::ROUTE_INVALID);
+            throw new MatcherException('Rout not found.');
         }
     }
 }

@@ -7,5 +7,5 @@ use FitdevPro\FitRouter\Request\IRequest;
 
 interface IBeforeMatchMiddleware extends IRouterMiddleware
 {
-    public function __invoke($data, IRequest $request, callable $next);
+    public function __invoke($router, IRequest $request, callable $next);
 }

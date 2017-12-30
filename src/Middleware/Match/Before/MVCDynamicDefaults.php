@@ -21,7 +21,7 @@ class MVCDynamicDefaults implements IBeforeMatchMiddleware
         $this->action = $action;
     }
 
-    public function __invoke($data, IRequest $request, callable $next)
+    public function __invoke($router, IRequest $request, callable $next)
     {
         $elements = explode('/', trim($request->getRequsetUrl(), '/'));
 
@@ -33,9 +33,9 @@ class MVCDynamicDefaults implements IBeforeMatchMiddleware
             $elements[1] = $this->action;
         }
 
-        $request->setRequsetUrl('/' . trim(join('/', $elements), '/'));
+        $request->setRequestUrl('/' . trim(join('/', $elements), '/'));
 
-        $request = $next($data, $request);
+        $request = $next($router, $request);
 
         return $request;
     }

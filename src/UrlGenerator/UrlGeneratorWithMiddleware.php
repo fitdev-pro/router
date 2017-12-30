@@ -7,18 +7,23 @@ use FitdevPro\FitMiddleware\Queue;
 use FitdevPro\FitMiddleware\Resolver;
 use FitdevPro\FitRouter\Middleware\Generate\IAfterGenerateMiddleware;
 use FitdevPro\FitRouter\Middleware\Generate\IBeforeGenerateMiddleware;
-use FitdevPro\FitRouter\Middleware\IRouterMiddleware;
 use FitdevPro\FitRouter\RouteCollection\IRouteCollection;
 
 class UrlGeneratorWithMiddleware implements IUrlGenerator
 {
     /** @var  IRouteCollection */
     private $routeCollection;
-    private $midlewares = [];
+    private $midlewaresBefore = [];
+    private $midlewaresAfter = [];
 
-    public function appendMiddleware(IRouterMiddleware $middleware)
+    public function appendBeforeMiddleware(IBeforeGenerateMiddleware $middleware)
     {
-        $this->midlewares[] = $middleware;
+        $this->midlewaresBefore[] = $middleware;
+    }
+
+    public function appendAfterMiddleware(IAfterGenerateMiddleware $middleware)
+    {
+        $this->midlewaresAfter[] = $middleware;
     }
 
     /**
@@ -40,30 +45,25 @@ class UrlGeneratorWithMiddleware implements IUrlGenerator
         return $url;
     }
 
-    protected function beforeGenerateHundle($input, $output)
-    {
-        $hundler = $this->getMiddlewareHundler(IBeforeGenerateMiddleware::class);
-
-        return $hundler->hundle($input, $output);
-    }
-
-    protected function afterGenerateHundle($input, $output)
-    {
-        $hundler = $this->getMiddlewareHundler(IAfterGenerateMiddleware::class);
-
-        return $hundler->hundle($input, $output);
-    }
-
-    protected function getMiddlewareHundler($type)
+    private function beforeGenerateHundle($input, $output)
     {
         $hundler = new MiddlewareHundler(new Resolver(), new Queue());
 
-        foreach ($this->midlewares as $midleware) {
-            if ($midleware instanceof $type) {
-                $hundler->append($midleware);
-            }
+        foreach ($this->midlewaresBefore as $midleware) {
+            $hundler->append($midleware);
         }
 
-        return $hundler;
+        return $hundler->hundle($input, $output);
+    }
+
+    private function afterGenerateHundle($input, $output)
+    {
+        $hundler = new MiddlewareHundler(new Resolver(), new Queue());
+
+        foreach ($this->midlewaresAfter as $midleware) {
+            $hundler->append($midleware);
+        }
+
+        return $hundler->hundle($input, $output);
     }
 }

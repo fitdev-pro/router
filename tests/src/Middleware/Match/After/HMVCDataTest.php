@@ -9,13 +9,6 @@ use Prophecy\Argument;
 
 class HMVCDataTest extends FitTest
 {
-    private function getEndCallback()
-    {
-        return function ($data, $output) {
-            return $output;
-        };
-    }
-
     public function testFill()
     {
         $middleware = new HMVCData();
@@ -41,6 +34,13 @@ class HMVCDataTest extends FitTest
             ]
         ],
             $newParams);
+    }
+
+    private function getEndCallback()
+    {
+        return function ($data, $output) {
+            return $output;
+        };
     }
 
     public function testFillWithParams()
@@ -73,7 +73,6 @@ class HMVCDataTest extends FitTest
 
     /**
      * @expectedException \FitdevPro\FitRouter\Exception\MiddlewareException
-     * @expectedExceptionCode 1815080601
      */
     public function testFillWithTooFewParams()
     {
@@ -93,7 +92,6 @@ class HMVCDataTest extends FitTest
 
     /**
      * @expectedException \FitdevPro\FitRouter\Exception\MiddlewareException
-     * @expectedExceptionCode 1815080602
      */
     public function testFillWithNoParams()
     {
@@ -113,7 +111,6 @@ class HMVCDataTest extends FitTest
 
     /**
      * @expectedException \FitdevPro\FitRouter\Exception\MiddlewareException
-     * @expectedExceptionCode 1815080603
      */
     public function testFillWithBadController()
     {

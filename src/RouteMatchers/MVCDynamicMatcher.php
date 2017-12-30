@@ -11,9 +11,6 @@ use FitdevPro\FitRouter\RouteCollection\IRouteCollection;
 
 class MVCDynamicMatcher implements IRouteMatcher
 {
-    const
-        ROUTE_INVALID = '1815130401';
-
     protected $segments = 2;
 
     public function match(IRouteCollection $routeCollection, IRequest $request): Route
@@ -32,16 +29,8 @@ class MVCDynamicMatcher implements IRouteMatcher
 
             return $route;
         } catch (InvalidArgumentException $e) {
-            throw new MatcherException('Rout not found.', self::ROUTE_INVALID);
+            throw new MatcherException('Rout not found.');
         }
-    }
-
-    protected function extractParamsValues(Route $route): array
-    {
-        $elements = explode('/', trim($route->getController(), '/'));
-        $attr = array_slice($elements, $this->segments);
-
-        return $attr;
     }
 
     protected function extractUrlInfo(Route $route): array
@@ -52,6 +41,14 @@ class MVCDynamicMatcher implements IRouteMatcher
             'Controller definition has %s segments, should contains at least %s segments.');
 
         return $elements;
+    }
+
+    protected function extractParamsValues(Route $route): array
+    {
+        $elements = explode('/', trim($route->getController(), '/'));
+        $attr = array_slice($elements, $this->segments);
+
+        return $attr;
     }
 
 
