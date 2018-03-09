@@ -2,28 +2,29 @@
 
 namespace FitdevPro\FitRouter\UrlGenerator;
 
-use FitdevPro\FitMiddleware\MiddlewareHandler;
+use FitdevPro\FitMiddleware\MiddlewareHundler;
 use FitdevPro\FitMiddleware\Queue;
 use FitdevPro\FitMiddleware\Resolver;
 use FitdevPro\FitRouter\Middleware\Generate\IAfterGenerateMiddleware;
 use FitdevPro\FitRouter\Middleware\Generate\IBeforeGenerateMiddleware;
+use FitdevPro\FitRouter\Middleware\IRouterMiddleware;
 use FitdevPro\FitRouter\RouteCollection\IRouteCollection;
 
 class UrlGeneratorWithMiddleware implements IUrlGenerator
 {
     /** @var  IRouteCollection */
     private $routeCollection;
-    private $middlewareBefore = [];
-    private $middlewareAfter = [];
+    private $midlewaresBefore = [];
+    private $midlewaresAfter = [];
 
     public function appendBeforeMiddleware(IBeforeGenerateMiddleware $middleware)
     {
-        $this->middlewareBefore[] = $middleware;
+        $this->midlewaresBefore[] = $middleware;
     }
 
     public function appendAfterMiddleware(IAfterGenerateMiddleware $middleware)
     {
-        $this->middlewareAfter[] = $middleware;
+        $this->midlewaresAfter[] = $middleware;
     }
 
     /**
@@ -36,34 +37,34 @@ class UrlGeneratorWithMiddleware implements IUrlGenerator
 
     public function generate(string $routeController, array $params = []): string
     {
-        $routeController = $this->beforeGenerateHandle($params, $routeController);
+        $routeController = $this->beforeGenerateHundle($params, $routeController);
 
         $route = $this->routeCollection->get($routeController);
 
-        $url = $this->afterGenerateHandle(['route' => $route, 'params' => $params], $route->getUrl());
+        $url = $this->afterGenerateHundle(['route' => $route, 'params' => $params], $route->getUrl());
 
         return $url;
     }
 
-    private function beforeGenerateHandle($input, $output)
+    private function beforeGenerateHundle($input, $output)
     {
-        $handler = new MiddlewareHandler(new Resolver(), new Queue());
+        $hundler = new MiddlewareHundler(new Resolver(), new Queue());
 
-        foreach ($this->middlewareBefore as $middleware) {
-            $handler->append($middleware);
+        foreach ($this->midlewaresBefore as $midleware) {
+            $hundler->append($midleware);
         }
 
-        return $handler->handle($input, $output);
+        return $hundler->hundle($input, $output);
     }
 
-    private function afterGenerateHandle($input, $output)
+    private function afterGenerateHundle($input, $output)
     {
-        $handler = new MiddlewareHandler(new Resolver(), new Queue());
+        $hundler = new MiddlewareHundler(new Resolver(), new Queue());
 
-        foreach ($this->middlewareAfter as $middleware) {
-            $handler->append($middleware);
+        foreach ($this->midlewaresAfter as $midleware) {
+            $hundler->append($midleware);
         }
 
-        return $handler->handle($input, $output);
+        return $hundler->hundle($input, $output);
     }
 }
