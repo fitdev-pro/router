@@ -2,7 +2,7 @@
 
 namespace FitdevPro\FitRouter;
 
-use FitdevPro\FitMiddleware\MiddlewareHundler;
+use FitdevPro\FitMiddleware\MiddlewareHandler;
 use FitdevPro\FitMiddleware\Queue;
 use FitdevPro\FitMiddleware\Resolver;
 use FitdevPro\FitRouter\Middleware\Match\IAfterMatchMiddleware;
@@ -23,8 +23,8 @@ class Router
     /** @var IUrlGenerator */
     protected $urlGenerator;
 
-    protected $midlewaresBefore = [];
-    protected $midlewaresAfter = [];
+    protected $middlewareBefore = [];
+    protected $middlewareAfter = [];
 
     /**
      * Router constructor.
@@ -54,43 +54,43 @@ class Router
 
     public function appendBeforeMiddleware(IBeforeMatchMiddleware $middleware)
     {
-        $this->midlewaresBefore[] = $middleware;
+        $this->middlewareBefore[] = $middleware;
     }
 
     public function appendAfterMiddleware(IAfterMatchMiddleware $middleware)
     {
-        $this->midlewaresAfter[] = $middleware;
+        $this->middlewareAfter[] = $middleware;
     }
 
     public function match(IRouterRequest $request)
     {
-        $request = $this->beforeMatchHundle($request);
+        $request = $this->beforeMatchHandle($request);
         $route = $this->routeMatcher->match($this->routeCollection, $request);
-        $route = $this->afterMatchHundle($route);
+        $route = $this->afterMatchHandle($route);
 
         return $route;
     }
 
-    protected function beforeMatchHundle($request)
+    protected function beforeMatchHandle($request)
     {
-        $hundler = new MiddlewareHundler(new Resolver(), new Queue());
+        $handler = new MiddlewareHandler(new Resolver(), new Queue());
 
-        foreach ($this->midlewaresBefore as $midleware) {
-            $hundler->append($midleware);
+        foreach ($this->middlewareBefore as $midleware) {
+            $handler->append($midleware);
         }
 
-        return $hundler->hundle($this, $request);
+        return $handler->handle($this, $request);
     }
 
-    protected function afterMatchHundle($route)
+    protected function afterMatchHandle($route)
     {
-        $hundler = new MiddlewareHundler(new Resolver(), new Queue());
+        $handler = new MiddlewareHandler(new Resolver(), new Queue());
 
-        foreach ($this->midlewaresAfter as $midleware) {
-            $hundler->append($midleware);
+        foreach ($this->middlewareAfter as $midleware) {
+            $handler->append($midleware);
         }
 
-        return $hundler->hundle($this, $route);
+        return $handler->handle($this, $route);
     }
 
     public function getUrlGenerate(): IUrlGenerator
