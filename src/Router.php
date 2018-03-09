@@ -2,7 +2,7 @@
 
 namespace FitdevPro\FitRouter;
 
-use FitdevPro\FitMiddleware\MiddlewareHundler;
+use FitdevPro\FitMiddleware\MiddlewareHandler;
 use FitdevPro\FitMiddleware\Queue;
 use FitdevPro\FitMiddleware\Resolver;
 use FitdevPro\FitRouter\Exception\RouterException;
@@ -66,9 +66,9 @@ class Router
     public function match(IRequest $request)
     {
         try {
-            $request = $this->beforeMatchHundle($request);
+            $request = $this->beforeMatchHandle($request);
             $route = $this->routeMatcher->match($this->routeCollection, $request);
-            $route = $this->afterMatchHundle($route);
+            $route = $this->afterMatchHandle($route);
         } catch (RouterException $e) {
             $route = null;
         }
@@ -76,26 +76,26 @@ class Router
         return $route;
     }
 
-    protected function beforeMatchHundle($request)
+    protected function beforeMatchHandle($request)
     {
-        $hundler = new MiddlewareHundler(new Resolver(), new Queue());
+        $handler = new MiddlewareHandler(new Resolver(), new Queue());
 
         foreach ($this->midlewaresBefore as $midleware) {
-            $hundler->append($midleware);
+            $handler->append($midleware);
         }
 
-        return $hundler->hundle($this, $request);
+        return $handler->handle($this, $request);
     }
 
-    protected function afterMatchHundle($route)
+    protected function afterMatchHandle($route)
     {
-        $hundler = new MiddlewareHundler(new Resolver(), new Queue());
+        $handler = new MiddlewareHandler(new Resolver(), new Queue());
 
         foreach ($this->midlewaresAfter as $midleware) {
-            $hundler->append($midleware);
+            $handler->append($midleware);
         }
 
-        return $hundler->hundle($this, $route);
+        return $handler->handle($this, $route);
     }
 
     public function getUrlGenerate(): IUrlGenerator
